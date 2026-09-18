@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRINETRA — Railway Security Intelligence Platform</title>
+  <meta name="description" content="TRINETRA Railway Security Operations Center. Integrated railway screening platform combining handheld field units and quadruped robotics.">
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="css/command_center.css">
+</head>
+<body>
+
+<div class="cc-app" id="cc-app">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="cc-sidebar">
+    <div class="cc-sidebar-head">
+      <div class="cc-sidebar-emblem">TRN</div>
+      <div class="cc-sidebar-brand">
+        <div class="cc-sidebar-title">TRINETRA</div>
+        <div class="cc-sidebar-subtitle">RAILWAY SECURITY SOC</div>
+      </div>
+    </div>
+
+    <!-- Navigation (Generated dynamically by JS based on department) -->
+    <nav class="cc-sidebar-nav" id="sidebar-nav"></nav>
+
+    <!-- Officer Profile Card Footer -->
+    <div class="cc-sidebar-foot">
+      <div class="cc-officer-card">
+        <div class="cc-officer-avatar" id="sidebar-officer-avatar">👮</div>
+        <div class="cc-officer-details">
+          <div class="cc-officer-name" id="sidebar-officer-name">Rahul Sharma</div>
+          <div class="cc-officer-meta"><span class="cc-officer-id" id="sidebar-officer-id">RPF-04217</span> · <span id="sidebar-officer-rank">ASI</span></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== APP BODY ===================== -->
+  <main class="cc-app-body">
+
+    <!-- Top Bar -->
+    <header class="cc-topbar">
+      <div class="cc-topbar-left">
+        <div class="cc-platform-title">TRINETRA</div>
+        <div class="cc-station-badge">
+          <span>STATION:</span>
+          <select id="station-select" class="cc-station-select">
+            <option value="nagpur">NAGPUR JUNCTION (Nagpur Div)</option>
+            <option value="mumbai">MUMBAI CSMT (Mumbai Div)</option>
+            <option value="delhi">NEW DELHI JUNCTION (Delhi Div)</option>
+          </select>
+        </div>
+        <div class="cc-status-indicator normal" id="station-status-pill">NORMAL OPERATIONS</div>
+      </div>
+
+      <div class="cc-topbar-right">
+        <a href="index.html" class="cc-site-btn" target="_blank" title="Open TRINETRA Technical Overview Website">
+          <span>🌐 Visit Website</span>
+          <span>↗</span>
+        </a>
+
+        <div class="cc-clock" id="topbar-clock">20:42:11 IST</div>
+
+        <!-- Role Quick Switcher (Demo) -->
+        <div class="cc-dept-switch-wrap" title="Switch operational department">
+          <span class="cc-dept-switch-label">Role:</span>
+          <select id="dept-select" class="cc-dept-select">
+            <option value="field_ops">Field Operations</option>
+            <option value="technical">Technical &amp; Engineering</option>
+            <option value="operations">Operations &amp; Control</option>
+            <option value="administration">Railway Administration</option>
+            <option value="executive">Executive Command</option>
+            <option value="sys_admin">System Administration</option>
+          </select>
+        </div>
+
+        <button class="cc-notif-btn" title="Live Notifications" type="button">
+          🔔 <span class="cc-notif-count">1</span>
+        </button>
+
+        <button class="cc-logout-btn" onclick="logout()" type="button">Logout</button>
+      </div>
+    </header>
+
+    <!-- Workspace Panes -->
+    <div class="cc-workspace">
+
+      <!-- ================= PANE 1: HOME (LOCATION + OPERATIONS) ================= -->
+      <div class="cc-pane active" id="pane-home">
+
+        <!-- Station Operational Summary -->
+        <div class="panel-card" style="margin-bottom: 14px;">
+          <div class="panel-head">
+            <div class="panel-title" id="station-title-display">NAGPUR JUNCTION — Nagpur Division · Central Railway</div>
+            <div class="panel-meta">STATION CODE: NGP · 4 PLATFORMS · 6 TRINETRA DEPLOYED UNITS</div>
+          </div>
+          <div class="panel-body">
+            <div class="station-metrics-grid">
+              <div class="sm-cell">
+                <div class="sm-label">Screenings Today</div>
+                <div class="sm-value" id="sm-today">2,842</div>
+              </div>
+              <div class="sm-cell check">
+                <div class="sm-label">Awaiting Verification</div>
+                <div class="sm-value" id="sm-verif">1</div>
+              </div>
+              <div class="sm-cell">
+                <div class="sm-label">Active Security Cases</div>
+                <div class="sm-value" id="sm-open">3</div>
+              </div>
+              <div class="sm-cell">
+                <div class="sm-label">Connected TRINETRA Units</div>
+                <div class="sm-value" id="sm-devs">6</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-Column Operational Grid -->
+        <div class="cc-ops-grid">
+
+          <!-- Left Column: Schematic & CCTV -->
+          <div class="cc-ops-left">
+
+            <!-- Railway Station Schematic -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div class="panel-title">RAILWAY STATION OPERATIONAL SCHEMATIC</div>
+                <div class="station-legend">
+                  <div class="legend-item"><span class="legend-dot hnd"></span> Handheld (H)</div>
+                  <div class="legend-item"><span class="legend-dot qdr"></span> Quadruped (Q)</div>
+                  <div class="legend-item"><span class="legend-dot cctv"></span> CCTV</div>
+                  <div class="legend-item"><span class="legend-dot alert"></span> Active Flag</div>
+                </div>
+              </div>
+              <div class="panel-body" style="padding: 0;">
+                <div class="station-svg-container" id="station-schematic-svg"></div>
+              </div>
+            </div>
+
+            <!-- Railway Surveillance CCTV (4 Feeds) -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div class="panel-title">RAILWAY SURVEILLANCE FEEDS (CCTV SPATIAL CONTEXT)</div>
+                <div class="panel-meta">AREA MONITORING · 4 ACTIVE CHANNELS</div>
+              </div>
+              <div class="panel-body">
+                <div class="cctv-grid">
+                  <div class="cctv-cell">
+                    <div class="cctv-head">
+                      <span>CAM-04 · PLATFORM 3 SCREENING LANE</span>
+                      <span class="pill check">CHECKPOINT</span>
+                    </div>
+                    <canvas id="cctv-p3" class="cctv-canvas" width="320" height="180"></canvas>
+                    <div class="cctv-bot">
+                      <span>TARGET SPATIAL TRACKING</span>
+                      <span>LIVE</span>
+                    </div>
+                  </div>
+
+                  <div class="cctv-cell">
+                    <div class="cctv-head">
+                      <span>CAM-01 · CONCOURSE GATE A</span>
+                      <span class="pill clear">NORMAL</span>
+                    </div>
+                    <canvas id="cctv-concourse" class="cctv-canvas" width="320" height="180"></canvas>
+                    <div class="cctv-bot">
+                      <span>PASSENGER CIRCULATION</span>
+                      <span>LIVE</span>
+                    </div>
+                  </div>
+
+                  <div class="cctv-cell">
+                    <div class="cctv-head">
+                      <span>CAM-02 · MAIN ENTRANCE PORCH</span>
+                      <span class="pill clear">NORMAL</span>
+                    </div>
+                    <canvas id="cctv-entry" class="cctv-canvas" width="320" height="180"></canvas>
+                    <div class="cctv-bot">
+                      <span>ENTRY POINT MONITOR</span>
+                      <span>LIVE</span>
+                    </div>
+                  </div>
+
+                  <div class="cctv-cell">
+                    <div class="cctv-head">
+                      <span>CAM-08 · SERVICE &amp; DEPOT YARD</span>
+                      <span class="pill clear">NORMAL</span>
+                    </div>
+                    <canvas id="cctv-yard" class="cctv-canvas" width="320" height="180"></canvas>
+                    <div class="cctv-bot">
+                      <span>FREIGHT &amp; TRACKS</span>
+                      <span>LIVE</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- end cc-ops-left -->
+
+          <!-- Right Column: Live Security Events & Info -->
+          <div class="cc-ops-right">
+
+            <!-- Live Security Events Feed -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div class="panel-title">LIVE SECURITY EVENTS</div>
+                <div class="panel-meta">REAL-TIME STREAM</div>
+              </div>
+              <div class="panel-body">
+                <div class="events-stream" id="events-stream-list"></div>
+              </div>
+            </div>
+
+            <!-- Station Information List -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div class="panel-title">STATION OPERATIONAL STATUS</div>
+              </div>
+              <div class="panel-body">
+                <div class="st-info-list" id="st-compact-info"></div>
+              </div>
+            </div>
+
+          </div><!-- end cc-ops-right -->
+
+        </div><!-- end cc-ops-grid -->
+
+      </div><!-- end pane-home -->
+
+      <!-- ================= PANE 2: MY ASSIGNMENTS ================= -->
+      <div class="cc-pane" id="pane-assignments">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">MY ASSIGNED VERIFICATIONS (FIELD OPERATIONS)</div>
+            <div class="panel-meta">ACTIONABLE DISPATCH QUEUE</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Case ID</th>
+                    <th>Security Event</th>
+                    <th>Location</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="assignments-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 3: SCREENINGS ================= -->
+      <div class="cc-pane" id="pane-screenings">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">TRINETRA SCREENING LOG (HANDHELD &amp; QUADRUPED)</div>
+            <div class="panel-meta">CRYPTOGRAPHIC EVENT LEDGER</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Event ID</th>
+                    <th>Timestamp</th>
+                    <th>Station Location</th>
+                    <th>Device</th>
+                    <th>Screening Result</th>
+                    <th>Officer / Operator</th>
+                    <th>Lineage</th>
+                  </tr>
+                </thead>
+                <tbody id="screenings-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 4: ALERTS ================= -->
+      <div class="cc-pane" id="pane-alerts">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">ACTIVE OPERATIONAL ALERTS</div>
+            <div class="panel-meta">ATTENTION REQUIRED</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Alert ID</th>
+                    <th>Timestamp</th>
+                    <th>Location</th>
+                    <th>Screening Unit</th>
+                    <th>Severity Status</th>
+                    <th>Assigned Personnel</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="alerts-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 5: CASES ================= -->
+      <div class="cc-pane" id="pane-cases">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">SECURITY CASES &amp; VERIFICATION WORKFLOW</div>
+            <div class="panel-meta">AUDIT COMPLIANCE RECORD</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Case Reference</th>
+                    <th>Originating Event</th>
+                    <th>Station Area</th>
+                    <th>Created At</th>
+                    <th>Assigned Officer</th>
+                    <th>Lifecycle Status</th>
+                    <th>Triage</th>
+                  </tr>
+                </thead>
+                <tbody id="cases-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 6: STATION VIEW ================= -->
+      <div class="cc-pane" id="pane-station">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">STATION OPERATIONAL SCHEMATIC</div>
+          </div>
+          <div class="panel-body" style="padding: 0;">
+            <div class="station-svg-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 7: DEVICES ================= -->
+      <div class="cc-pane" id="pane-devices">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">FIELD HARDWARE REGISTRY (TRINETRA FLEET)</div>
+            <div class="panel-meta">DUAL-PLATFORM HARDWARE HEALTH</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Unit ID</th>
+                    <th>Platform Type</th>
+                    <th>Assigned Location</th>
+                    <th>Status</th>
+                    <th>Battery</th>
+                    <th>Core Temp</th>
+                    <th>Assigned Duty</th>
+                    <th>Diagnostics</th>
+                  </tr>
+                </thead>
+                <tbody id="devices-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 8: PERSONNEL ================= -->
+      <div class="cc-pane" id="pane-officers">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">RAILWAY PROTECTION FORCE (DUTY PERSONNEL)</div>
+            <div class="panel-meta">ON-DUTY ROSTER</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Officer ID</th>
+                    <th>Name</th>
+                    <th>Rank</th>
+                    <th>Department</th>
+                    <th>Assigned Duty Station</th>
+                    <th>Status</th>
+                    <th>Open Cases</th>
+                    <th>Dispatch</th>
+                  </tr>
+                </thead>
+                <tbody id="personnel-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 9: DIAGNOSTICS & SENSORS ================= -->
+      <div class="cc-pane" id="pane-diagnostics">
+        <div class="tech-spec-grid">
+          <div class="tech-spec-card">
+            <div class="tech-spec-head">
+              <img src="assets/raspberry_pi_5.jpg" alt="RPi 5" class="tech-spec-img">
+              <div>
+                <div style="font-weight:700; font-size:12px;">Raspberry Pi 5 (Edge Compute)</div>
+                <div style="font-size:10px; color:var(--text-muted);">Quad-Core Cortex-A76 @ 2.4 GHz · 8GB LPDDR4X</div>
+              </div>
+            </div>
+            <div class="st-info-list">
+              <div class="st-info-row"><span class="k">CPU Load</span><span class="v">18.4% Nominal</span></div>
+              <div class="st-info-row"><span class="k">SoC Temperature</span><span class="v">42.8°C (Active Cooling)</span></div>
+              <div class="st-info-row"><span class="k">RAM Utilization</span><span class="v">2.1 GB / 8.0 GB</span></div>
+              <div class="st-info-row"><span class="k">NVMe Storage Buffer</span><span class="v">114 GB Available</span></div>
+            </div>
+          </div>
+
+          <div class="tech-spec-card">
+            <div class="tech-spec-head">
+              <img src="assets/mmwave_radar.jpg" alt="mmWave" class="tech-spec-img">
+              <div>
+                <div style="font-weight:700; font-size:12px;">mmWave Radar (60 GHz)</div>
+                <div style="font-size:10px; color:var(--text-muted);">FMCW Transceiver · Range-Doppler Profiler</div>
+              </div>
+            </div>
+            <div class="st-info-list">
+              <div class="st-info-row"><span class="k">Sweep Bandwidth</span><span class="v">60–64 GHz (4 GHz)</span></div>
+              <div class="st-info-row"><span class="k">Range Resolution</span><span class="v">3.75 cm per bin</span></div>
+              <div class="st-info-row"><span class="k">Sampling Rate</span><span class="v">2.5 MS/s</span></div>
+              <div class="st-info-row"><span class="k">Dielectric Anomaly</span><span class="v" style="color:var(--st-check);">+18.4 dB @ 14.2 cm</span></div>
+            </div>
+          </div>
+
+          <div class="tech-spec-card">
+            <div class="tech-spec-head">
+              <img src="assets/enose_sensor.jpg" alt="E-Nose" class="tech-spec-img">
+              <div>
+                <div style="font-weight:700; font-size:12px;">E-Nose Gas Sensor Array</div>
+                <div style="font-size:10px; color:var(--text-muted);">MOX Multi-Channel Array + Pneumatic Chamber</div>
+              </div>
+            </div>
+            <div class="st-info-list">
+              <div class="st-info-row"><span class="k">Channels</span><span class="v">MQ-135, MQ-2, BME688</span></div>
+              <div class="st-info-row"><span class="k">Heater Temp</span><span class="v">300°C Regulated</span></div>
+              <div class="st-info-row"><span class="k">Pneumatic Snout</span><span class="v">0.8 L/min Flow Rate</span></div>
+              <div class="st-info-row"><span class="k">VOC Delta Peak</span><span class="v" style="color:var(--st-check);">840 PPM (MQ-135)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="panel-card">
+            <div class="panel-head">
+              <div class="panel-title">mmWave RADAR RANGE-DOPPLER RESPONSE</div>
+              <div class="panel-meta">60 GHz FMCW</div>
+            </div>
+            <div class="panel-body">
+              <div class="tech-canvas-wrap">
+                <canvas id="radar-canvas" width="460" height="180" style="width:100%; display:block;"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-head">
+              <div class="panel-title">E-NOSE MULTI-CHANNEL CHROMATOGRAPHY</div>
+              <div class="panel-meta">MOX ARRAY RESPONSE</div>
+            </div>
+            <div class="panel-body">
+              <div class="tech-canvas-wrap">
+                <canvas id="enose-canvas" width="460" height="180" style="width:100%; display:block;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 10: AI / ML ================= -->
+      <div class="cc-pane" id="pane-aiml">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">TRINETRA DUAL-MODALITY AI / ML INFERENCE ENGINE</div>
+            <div class="panel-meta">EDGE NEURAL ACCELERATOR</div>
+          </div>
+          <div class="panel-body">
+            <div class="st-info-list" style="margin-bottom:14px;">
+              <div class="st-info-row"><span class="k">Model Architecture</span><span class="v">Trinetra-Fusion-v2.4 (Cross-Attention Multimodal Transformer)</span></div>
+              <div class="st-info-row"><span class="k">Edge Quantization</span><span class="v">INT8 (TFLite / ONNX Runtime Edge)</span></div>
+              <div class="st-info-row"><span class="k">Inference Latency</span><span class="v">41.2 ms (Single Screening Sweep)</span></div>
+              <div class="st-info-row"><span class="k">Sensor Inputs</span><span class="v">60 GHz mmWave Radar FFT + MOX Gas Channel Curves + Thermal IR</span></div>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); background:var(--bg-subtle); padding:10px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
+              <b>Operational Classification Logic:</b> Neural model assigns confidence weights across radar dielectric bulk and chemical vapor response. Threshold >0.85 generates <i>Requires Verification</i> notification to RPF officer.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 11: AUDIT LEDGER ================= -->
+      <div class="cc-pane" id="pane-audit">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">SECURITY AUDIT &amp; COMPLIANCE LEDGER</div>
+            <div class="panel-meta">TAMPER-PROOF LOG</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Officer / System Principal</th>
+                    <th>Operational Action</th>
+                    <th>Device</th>
+                    <th>Station Location</th>
+                  </tr>
+                </thead>
+                <tbody id="audit-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end cc-workspace -->
+
+    <!-- Footer -->
+    <footer class="cc-footer">
+      <div>TRINETRA · INTEGRATED RAILWAY SECURITY INTELLIGENCE PLATFORM</div>
+      <div>DEMO ENVIRONMENT · SIMULATED DATA · SIH 2026 (Problem Statement 26026)</div>
+    </footer>
+
+  </main><!-- end cc-app-body -->
+
+</div><!-- end cc-app -->
+
+
+<!-- ================================================================
+     MODAL 1: UNIFIED SECURITY EVENT DETAIL (TRACE LINEAGE CHAIN)
+     ================================================================ -->
+<div class="modal-backdrop" id="modal-event" role="dialog" aria-modal="true" aria-labelledby="modal-event-id">
+  <div class="modal-box modal-lg">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modal-event-id">TRN-2026-001284</div>
+        <div class="modal-subtitle" id="modal-event-location">Platform 3 — Nagpur Junction</div>
+      </div>
+      <span class="modal-close" onclick="closeModal('modal-event')" title="Close" role="button" aria-label="Close">✕</span>
+    </div>
+    <div class="modal-body" id="modal-event-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-event')">Close</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-event'); switchPane('cases');">Open Case Management →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     MODAL 2: DEVICE TELEMETRY DETAIL
+     ================================================================ -->
+<div class="modal-backdrop" id="modal-device" role="dialog" aria-modal="true" aria-labelledby="modal-device-id">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modal-device-id">TRN-HND-001</div>
+        <div class="modal-subtitle" id="modal-device-location">Platform 3 — Nagpur Junction</div>
+      </div>
+      <span class="modal-close" onclick="closeModal('modal-device')" title="Close" role="button" aria-label="Close">✕</span>
+    </div>
+    <div class="modal-body" id="modal-device-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-device')">Close</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-device'); switchPane('diagnostics');">View Sensor Telemetry →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     MODAL 3: ASSIGN DUTY OFFICER
+     ================================================================ -->
+<div class="modal-backdrop" id="modal-assign" role="dialog" aria-modal="true" aria-labelledby="modal-assign-title">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modal-assign-title">Assign Verification Officer</div>
+        <div class="modal-subtitle">Case: <b id="modal-assign-caseid">CASE-2026-001284</b></div>
+      </div>
+      <span class="modal-close" onclick="closeModal('modal-assign')" title="Close" role="button" aria-label="Close">✕</span>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">Assign this security screening case to an on-duty RPF officer. A dispatch notification will be transmitted to their TRINETRA handheld terminal.</p>
+      <div class="form-group">
+        <label class="form-label" for="assign-officer-select">Select Duty Officer</label>
+        <select class="form-input" id="assign-officer-select" style="width:100%;">
+          <option value="ASI Rahul Sharma (RPF-04217)">ASI Rahul Sharma (RPF-04217) — Platform 3 North</option>
+          <option value="Insp. Rajesh Kumar (RPF-08819)">Insp. Rajesh Kumar (RPF-08819) — Platform 2</option>
+          <option value="Const. P. Verma (RPF-03314)">Const. P. Verma (RPF-03314) — Concourse Gate A</option>
+          <option value="RPF QRT-2 (RPF-0102)">RPF QRT-2 (RPF-0102) — Quick Response Team</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-assign')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAssignment()">Confirm Assignment</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     AUTHENTICATION OVERLAY — RPF SECURE ACCESS TERMINAL
+     ================================================================ -->
+<div class="auth-overlay open" id="auth-overlay">
+
+  <div class="auth-header">
+    <div class="auth-ministry-badge">MINISTRY OF RAILWAYS · RAILWAY PROTECTION FORCE</div>
+    <div class="auth-brand-row">
+      <div class="auth-crest">TRN</div>
+      <div>
+        <div class="auth-title">TRINETRA</div>
+        <div class="auth-sub">RAILWAY SECURITY OPERATIONS COMMAND CENTER</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-deck">
+
+    <!-- LEFT COLUMN: Department Selection & 1-Click Access -->
+    <div class="auth-card">
+      <div class="auth-card-head">
+        <div class="auth-card-title">1. SELECT OPERATIONAL DEPARTMENT</div>
+        <div class="auth-card-sub">Choose your operational branch to load role-specific workspace</div>
+      </div>
+      <div class="auth-card-body">
+        <div class="dept-grid">
+          <button type="button" class="dept-btn selected" id="dept-btn-field_ops" onclick="selectDept('field_ops')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">👮</span>
+              <span class="dept-btn-lvl">LEVEL 2</span>
+            </div>
+            <span class="dept-btn-name">Field Operations</span>
+            <span class="dept-btn-officer">ASI Rahul Sharma</span>
+            <span class="dept-btn-desc">Frontline screening, assignments &amp; SOP verification</span>
+          </button>
+
+          <button type="button" class="dept-btn" id="dept-btn-technical" onclick="selectDept('technical')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">⚙️</span>
+              <span class="dept-btn-lvl">LEVEL 3</span>
+            </div>
+            <span class="dept-btn-name">Technical &amp; Engineering</span>
+            <span class="dept-btn-officer">Dr. S. K. Mehta</span>
+            <span class="dept-btn-desc">Sensor telemetry, mmWave radar &amp; AI edge models</span>
+          </button>
+
+          <button type="button" class="dept-btn" id="dept-btn-operations" onclick="selectDept('operations')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">👔</span>
+              <span class="dept-btn-lvl">LEVEL 4</span>
+            </div>
+            <span class="dept-btn-name">Operations &amp; Control</span>
+            <span class="dept-btn-officer">A. K. Joshi (DSC)</span>
+            <span class="dept-btn-desc">Station triage, officer dispatch &amp; CCTV surveillance</span>
+          </button>
+
+          <button type="button" class="dept-btn" id="dept-btn-administration" onclick="selectDept('administration')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">🏛️</span>
+              <span class="dept-btn-lvl">LEVEL 5</span>
+            </div>
+            <span class="dept-btn-name">Railway Administration</span>
+            <span class="dept-btn-officer">V. R. Nair (PCSC)</span>
+            <span class="dept-btn-desc">Zonal network KPIs &amp; compliance reporting</span>
+          </button>
+
+          <button type="button" class="dept-btn" id="dept-btn-executive" onclick="selectDept('executive')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">🇮🇳</span>
+              <span class="dept-btn-lvl">LEVEL 5</span>
+            </div>
+            <span class="dept-btn-name">Executive Command</span>
+            <span class="dept-btn-officer">K. P. Sharma (DG RPF)</span>
+            <span class="dept-btn-desc">National security readiness &amp; executive overview</span>
+          </button>
+
+          <button type="button" class="dept-btn" id="dept-btn-sys_admin" onclick="selectDept('sys_admin')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">🔧</span>
+              <span class="dept-btn-lvl">LEVEL 5</span>
+            </div>
+            <span class="dept-btn-name">System Administration</span>
+            <span class="dept-btn-officer">IT SysAdmin</span>
+            <span class="dept-btn-desc">RBAC accounts &amp; cryptographic audit log</span>
+          </button>
+        </div>
+
+        <div class="demo-quick-bar">
+          <div class="demo-quick-title">⚡ 1-CLICK INSTANT DEMO LOGIN</div>
+          <div class="demo-pills">
+            <button type="button" class="demo-pill" onclick="quickLogin('field_ops')">👮 Field Officer</button>
+            <button type="button" class="demo-pill" onclick="quickLogin('technical')">⚙️ Technical</button>
+            <button type="button" class="demo-pill" onclick="quickLogin('operations')">👔 Operations</button>
+            <button type="button" class="demo-pill" onclick="quickLogin('administration')">🏛️ Zonal Admin</button>
+            <button type="button" class="demo-pill" onclick="quickLogin('executive')">🇮🇳 Executive DG</button>
+            <button type="button" class="demo-pill" onclick="quickLogin('sys_admin')">🔧 Sys Admin</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Authentication & Officer Terminal -->
+    <div class="auth-card">
+      <div class="auth-card-head">
+        <div class="auth-card-title">2. OFFICER AUTHENTICATION</div>
+        <div class="auth-card-sub">Authenticated session with audit ledger entry</div>
+      </div>
+      <div class="auth-card-body">
+
+        <!-- Officer Preview -->
+        <div class="auth-officer-preview">
+          <div class="aop-avatar" id="aop-avatar">👮</div>
+          <div class="aop-info">
+            <div class="aop-name" id="aop-name">Rahul Sharma</div>
+            <div class="aop-role" id="aop-role">Assistant Sub-Inspector · Field Operations</div>
+            <div class="aop-meta">
+              <span class="aop-chip" id="aop-id">ID: RPF-04217</span>
+              <span class="aop-chip" id="aop-station">Nagpur Junction</span>
+              <span class="aop-chip" id="aop-level" style="font-weight:700; color:var(--st-clear-text);">LEVEL 2</span>
+            </div>
+          </div>
+        </div>
+
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label" for="login-id">Officer / Employee ID</label>
+            <input type="text" class="form-input" id="login-id" value="RPF-04217" autocomplete="username" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-pw">Password / Biometric PIN</label>
+            <input type="password" class="form-input" id="login-pw" value="••••••••••••" autocomplete="current-password" required>
+          </div>
+
+          <button type="submit" class="btn-signin" id="btn-signin">
+            <span id="btn-signin-text">AUTHENTICATE &amp; ENTER →</span>
+          </button>
+        </form>
+
+        <div class="auth-disclaimer">
+          <b>RPF Terminal Notice:</b> All triage decisions, station queries, and sensor telemetry access are cryptographically recorded in the Central Security Audit Ledger.
+        </div>
+
+        <div style="margin-top: 10px; text-align: center;">
+          <a href="index.html" target="_blank" style="font-size: 11px; font-weight: 600; color: var(--accent-bronze);">
+            🌐 Visit Public Technical Proposal Website ↗
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end auth-deck -->
+
+</div><!-- end auth-overlay -->
+
+<script src="js/command_center.js"></script>
+</body>
+</html>
