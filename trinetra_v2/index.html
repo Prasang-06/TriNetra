@@ -570,15 +570,158 @@
       gap: 16px;
     }
 
-    /* Responsive */
+    /* Mobile Menu Toggle Button */
+    .mobile-menu-btn {
+      display: none;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--navy);
+      font-size: 22px;
+      line-height: 1;
+      transition: background 0.15s ease;
+    }
+    .mobile-menu-btn:hover { background: var(--surface-subtle); }
+
+    /* Mobile Drawer & Backdrop */
+    .mobile-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
+      z-index: 1099;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .mobile-backdrop.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .mobile-drawer {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 290px;
+      height: 100vh;
+      background: #ffffff;
+      box-shadow: -4px 0 24px rgba(0, 0, 0, 0.18);
+      z-index: 1100;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+    .mobile-drawer.active {
+      transform: translateX(-320px);
+    }
+    .mobile-drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
+    }
+    .mobile-drawer-close {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface-subtle);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+    }
+    .mobile-drawer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-nav-link {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+      display: block;
+    }
+    .mobile-nav-link:hover, .mobile-nav-link:active {
+      background: var(--surface-subtle);
+      color: var(--blue);
+    }
+    .mobile-drawer-cta {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Table Scroll Wrapping */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: #ffffff;
+      margin-top: 36px;
+      box-shadow: var(--shadow-sm);
+    }
+    .table-responsive .clean-table {
+      min-width: 620px;
+      width: 100%;
+      margin: 0;
+    }
+
+    /* Enhanced Responsive Rules */
     @media (max-width: 1024px) {
       .hero-grid, .officer-section { grid-template-columns: 1fr; }
-      .hw-gallery-grid, .decision-grid { grid-template-columns: repeat(2, 1fr); }
+      .hw-gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .decision-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .section { padding: 48px 0; }
+      .hero { padding: 36px 0 44px; }
+      .container { padding: 0 16px; }
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: flex; }
+      .nav-sub { display: none; }
+      .hero-stats { grid-template-columns: 1fr; gap: 10px; }
+      .cctv-flow-container { flex-direction: column; gap: 6px; }
+      .cctv-flow-arrow { transform: rotate(90deg); margin: 2px 0; }
+      .cctv-flow-node { width: 100%; }
+      .cctv-display-top { flex-direction: column; gap: 4px; font-size: 10px; }
+      .cctv-box-overlay { left: 8%; width: 84%; font-size: 9.5px; }
+      .banner-cta { padding: 28px 16px; }
+      .banner-cta h2 { font-size: 22px; }
+      .footer-inner { flex-direction: column; text-align: center; gap: 12px; }
     }
     @media (max-width: 640px) {
       .hw-gallery-grid, .decision-grid { grid-template-columns: 1fr; }
-      .hero-stats { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
+      .hero h1 { font-size: 26px; }
+      .hero p.lead { font-size: 14px; }
+      .hero-buttons { flex-direction: column; }
+      .hero-buttons .btn { width: 100%; justify-content: center; }
+      .officer-section { padding: 18px; }
+      .cctv-infra-card { padding: 18px; }
+      .hw-img-container { height: 180px; }
+      .hw-item-body { padding: 16px; }
+      .navbar { height: 60px; }
     }
   </style>
 </head>
@@ -597,6 +740,7 @@
         </div>
       </a>
 
+      <!-- Desktop Navigation -->
       <nav class="nav-links">
         <a href="#officer">Officer Presence</a>
         <a href="#infrastructure">Existing CCTV</a>
@@ -608,8 +752,40 @@
           <span>↗</span>
         </a>
       </nav>
+
+      <!-- Mobile Hamburger Button -->
+      <button type="button" class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Open Navigation Menu">
+        ☰
+      </button>
     </div>
   </header>
+
+  <!-- Mobile Drawer & Overlay -->
+  <div class="mobile-backdrop" id="mobile-backdrop"></div>
+  <aside class="mobile-drawer" id="mobile-drawer" aria-label="Mobile Navigation">
+    <div class="mobile-drawer-head">
+      <div class="nav-brand">
+        <div class="nav-logo-box" style="width:30px; height:30px; font-size:15px;">🚆</div>
+        <div class="nav-title" style="font-size:15px;">TRINETRA</div>
+      </div>
+      <button type="button" class="mobile-drawer-close" id="mobile-drawer-close" aria-label="Close Navigation Menu">
+        ✕
+      </button>
+    </div>
+    <nav class="mobile-drawer-links">
+      <a href="#officer" class="mobile-nav-link" onclick="closeMobileMenu()">👮 Officer Presence</a>
+      <a href="#infrastructure" class="mobile-nav-link" onclick="closeMobileMenu()">📹 Existing CCTV</a>
+      <a href="#hardware" class="mobile-nav-link" onclick="closeMobileMenu()">⚙️ Hardware BOM</a>
+      <a href="#platforms" class="mobile-nav-link" onclick="closeMobileMenu()">🤖 Field Platforms</a>
+      <a href="#decision" class="mobile-nav-link" onclick="closeMobileMenu()">📊 Decision Logic</a>
+    </nav>
+    <div class="mobile-drawer-cta">
+      <a href="command_center.html" class="btn-command-center" style="width:100%; justify-content:center; padding:12px 16px;">
+        <span>Live Command Center</span>
+        <span>↗</span>
+      </a>
+    </div>
+  </aside>
 
   <!-- =====================================================================
        HERO SECTION
@@ -901,7 +1077,7 @@
         The handheld device addresses speed and portability for close-range screening, while the quadruped robot addresses reach, remote inspection, under-carriage crawl, and hazardous terrain.
       </p>
 
-      <div class="compare-container">
+      <div class="table-responsive">
         <table class="clean-table">
           <thead>
             <tr>
@@ -1063,5 +1239,36 @@
     </div>
   </footer>
 
+  <!-- Mobile Drawer Toggle Script -->
+  <script>
+    const mobileDrawer = document.getElementById('mobile-drawer');
+    const mobileBackdrop = document.getElementById('mobile-backdrop');
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const mobileClose = document.getElementById('mobile-drawer-close');
+
+    function openMobileMenu() {
+      if (mobileDrawer && mobileBackdrop) {
+        mobileDrawer.classList.add('active');
+        mobileBackdrop.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeMobileMenu() {
+      if (mobileDrawer && mobileBackdrop) {
+        mobileDrawer.classList.remove('active');
+        mobileBackdrop.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+
+    if (mobileToggle) mobileToggle.addEventListener('click', openMobileMenu);
+    if (mobileClose) mobileClose.addEventListener('click', closeMobileMenu);
+    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeMobileMenu();
+    });
+  </script>
 </body>
 </html>

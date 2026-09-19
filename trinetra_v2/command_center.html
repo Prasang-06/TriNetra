@@ -12,14 +12,20 @@
 
 <div class="cc-app" id="cc-app">
 
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div class="cc-sidebar-backdrop" id="cc-sidebar-backdrop" onclick="closeSidebar()"></div>
+
   <!-- ===================== SIDEBAR ===================== -->
-  <aside class="cc-sidebar">
+  <aside class="cc-sidebar" id="cc-sidebar">
     <div class="cc-sidebar-head">
-      <div class="cc-sidebar-emblem">TRN</div>
-      <div class="cc-sidebar-brand">
-        <div class="cc-sidebar-title">TRINETRA</div>
-        <div class="cc-sidebar-subtitle">RAILWAY SECURITY SOC</div>
+      <div class="cc-sidebar-head-brand">
+        <div class="cc-sidebar-emblem">TRN</div>
+        <div class="cc-sidebar-brand">
+          <div class="cc-sidebar-title">TRINETRA</div>
+          <div class="cc-sidebar-subtitle">RAILWAY SECURITY SOC</div>
+        </div>
       </div>
+      <button class="cc-sidebar-close-btn" id="cc-sidebar-close" onclick="closeSidebar()" type="button" aria-label="Close navigation sidebar">✕</button>
     </div>
 
     <!-- Navigation (Generated dynamically by JS based on department) -->
@@ -43,6 +49,9 @@
     <!-- Top Bar -->
     <header class="cc-topbar">
       <div class="cc-topbar-left">
+        <button class="cc-mobile-toggle-btn" id="cc-mobile-toggle" onclick="toggleSidebar()" type="button" aria-label="Open navigation sidebar">
+          ☰
+        </button>
         <div class="cc-platform-title">TRINETRA</div>
         <div class="cc-station-badge">
           <span>STATION:</span>

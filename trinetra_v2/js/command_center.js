@@ -288,7 +288,34 @@ document.addEventListener('DOMContentLoaded', () => {
   if (deptSel) {
     deptSel.addEventListener('change', (e) => quickLogin(e.target.value));
   }
+
+  // Keyboard shortcut (Escape to close mobile sidebar)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSidebar();
+  });
 });
+
+// Mobile Sidebar Toggle Handlers
+function toggleSidebar() {
+  const sidebar = document.getElementById('cc-sidebar');
+  const backdrop = document.getElementById('cc-sidebar-backdrop');
+  if (sidebar && backdrop) {
+    const isOpen = sidebar.classList.contains('open');
+    if (isOpen) {
+      closeSidebar();
+    } else {
+      sidebar.classList.add('open');
+      backdrop.classList.add('active');
+    }
+  }
+}
+
+function closeSidebar() {
+  const sidebar = document.getElementById('cc-sidebar');
+  const backdrop = document.getElementById('cc-sidebar-backdrop');
+  if (sidebar) sidebar.classList.remove('open');
+  if (backdrop) backdrop.classList.remove('active');
+}
 
 // Live IST Clock
 function initClock() {
@@ -434,6 +461,7 @@ function switchPane(paneKey) {
   if (paneEl) paneEl.classList.add('active');
 
   buildNav();
+  closeSidebar();
 
   if (paneKey === 'home') renderHomePane();
   if (paneKey === 'assignments') renderAssignmentsPane();
