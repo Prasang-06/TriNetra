@@ -1,1274 +1,790 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TRINETRA — Railway Narcotics & Explosives Detection System (SIH 26026)</title>
-  
-  <!-- Clean High-Readability Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <style>
-    /* ==========================================================================
-       RESTRAINED RAILWAY CONTROL ROOM PALETTE
-       Primary: Deep navy / charcoal
-       Background: Very light neutral gray / off-white
-       Surface: Pure white
-       Text: Dark charcoal / navy
-       Accent: Professional railway blue
-       Status: Green (Clear), Amber (Check), Red (Alert), Gray (Offline)
-       Rules: No neon, no excessive cyan, no cyberpunk, no glowing cards
-       ========================================================================== */
-    :root {
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-subtle: #f1f5f9;
-      --border: #e2e8f0;
-      --border-dark: #cbd5e1;
-
-      --text-primary: #0f172a;
-      --text-secondary: #334155;
-      --text-muted: #64748b;
-      --text-dim: #94a3b8;
-
-      --navy: #0f172a;
-      --navy-header: #0b192c;
-      --blue: #1d4ed8;
-      --blue-subtle: #eff6ff;
-      --blue-border: #bfdbfe;
-
-      --green: #15803d;
-      --green-bg: #f0fdf4;
-      --green-border: #bbf7d0;
-
-      --amber: #b45309;
-      --amber-bg: #fffbeb;
-      --amber-border: #fed7aa;
-
-      --red: #b91c1c;
-      --red-bg: #fef2f2;
-      --red-border: #fecaca;
-
-      --radius-sm: 4px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-      --radius-full: 9999px;
-
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -1px rgba(0,0,0,0.04);
-
-      --max-w: 1220px;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background-color: var(--bg);
-      color: var(--text-primary);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.6;
-      font-size: 15px;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a { color: inherit; text-decoration: none; }
-    code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
-
-    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
-    .section { padding: 80px 0; border-top: 1px solid var(--border); }
-
-    /* Restrained Badges */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: var(--radius-sm);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      background: var(--surface-subtle);
-      color: var(--text-secondary);
-      border: 1px solid var(--border);
-    }
-    .badge.blue { background: var(--blue-subtle); color: var(--blue); border-color: var(--blue-border); }
-    .badge.green { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
-    .badge.amber { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
-    .badge.red { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
-
-    /* Navigation */
-    .navbar {
-      height: 68px;
-      background: #ffffff;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    .nav-inner {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .nav-logo-box {
-      width: 36px;
-      height: 36px;
-      background: var(--navy);
-      color: #ffffff;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: 900;
-    }
-    .nav-title { font-size: 16px; font-weight: 800; letter-spacing: 0.02em; color: var(--navy); }
-    .nav-sub { font-size: 11px; color: var(--text-muted); }
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 22px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-    .nav-links a:hover { color: var(--blue); }
-
-    .btn-command-center {
-      background: var(--navy);
-      color: #ffffff !important;
-      padding: 8px 16px;
-      border-radius: var(--radius-sm);
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.15s ease;
-    }
-    .btn-command-center:hover { background: #1e293b; }
-
-    /* Hero */
-    .hero {
-      padding: 70px 0 80px;
-      background: #ffffff;
-    }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
-      gap: 40px;
-      align-items: center;
-    }
-    .hero-eyebrows {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-    .hero h1 {
-      font-size: clamp(32px, 4.2vw, 52px);
-      font-weight: 900;
-      line-height: 1.12;
-      letter-spacing: -0.02em;
-      color: var(--navy);
-      margin-bottom: 18px;
-    }
-    .hero p.lead {
-      font-size: 16px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 26px;
-    }
-
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      padding: 14px 18px;
-      background: var(--surface-subtle);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      margin-bottom: 28px;
-    }
-    .hero-stat small {
-      display: block;
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 2px;
-    }
-    .hero-stat b {
-      font-size: 19px;
-      font-weight: 800;
-      color: var(--navy);
-    }
-
-    .hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn {
-      padding: 11px 20px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .btn.primary { background: var(--navy); color: #ffffff; border: 1px solid var(--navy); }
-    .btn.primary:hover { background: #1e293b; }
-    .btn.outline { background: #ffffff; color: var(--text-secondary); border: 1px solid var(--border-dark); }
-    .btn.outline:hover { background: var(--surface-subtle); }
-
-    /* Section Headings */
-    .section-eyebrow {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 6px;
-    }
-    .section-title {
-      font-size: clamp(24px, 3vw, 34px);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: var(--navy);
-      line-height: 1.25;
-      margin-bottom: 12px;
-    }
-    .section-desc {
-      font-size: 15px;
-      color: var(--text-secondary);
-      max-width: 760px;
-      line-height: 1.6;
-    }
-
-    /* ==========================================================================
-       SECTION: REAL HUMAN / OFFICER PRESENCE
-       ========================================================================== */
-    .officer-section {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 40px;
-      display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 36px;
-      align-items: center;
-      box-shadow: var(--shadow-sm);
-      margin-top: 40px;
-    }
-    .officer-badge-card {
-      background: var(--surface-subtle);
-      border: 1px solid var(--border-medium);
-      border-radius: var(--radius-md);
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .officer-avatar-box {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-    .officer-emblem {
-      width: 56px;
-      height: 56px;
-      background: var(--navy);
-      color: #ffffff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      font-weight: 900;
-    }
-    .officer-identity h4 { font-size: 16px; font-weight: 800; color: var(--navy); }
-    .officer-identity div { font-size: 12px; color: var(--text-muted); }
-
-    .officer-specs-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .officer-spec-item {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-    }
-    .officer-spec-item span { color: var(--text-muted); }
-    .officer-spec-item b { color: var(--navy); }
-
-    /* ==========================================================================
-       SECTION: WORKS WITH EXISTING INFRASTRUCTURE (CCTV INTEGRATION)
-       ========================================================================== */
-    .cctv-infra-card {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 36px;
-      box-shadow: var(--shadow-sm);
-      margin-top: 40px;
-    }
-    .cctv-flow-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 28px 0;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .cctv-flow-node {
-      background: var(--surface-subtle);
-      border: 1px solid var(--border-medium);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      text-align: center;
-      flex-grow: 1;
-    }
-    .cctv-flow-node.active-node {
-      background: var(--navy);
-      color: #ffffff;
-      border-color: var(--navy);
-    }
-    .cctv-flow-node.active-node small { color: #94a3b8; }
-    .cctv-flow-title { font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
-    .cctv-flow-node small { display: block; font-size: 10px; color: var(--text-muted); }
-    .cctv-flow-arrow { font-weight: 800; color: var(--text-muted); }
-
-    /* CCTV Camera Frame Display */
-    .cctv-display-box {
-      background: #0f172a;
-      border-radius: var(--radius-md);
-      padding: 16px;
-      border: 2px solid #1e293b;
-      color: #ffffff;
-      position: relative;
-    }
-    .cctv-display-top {
-      display: flex;
-      justify-content: space-between;
-      font-family: monospace;
-      font-size: 11px;
-      color: #38bdf8;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #1e293b;
-    }
-    .cctv-frame-mock {
-      background: #090e17;
-      border: 1px dashed #334155;
-      height: 240px;
-      border-radius: var(--radius-sm);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .cctv-box-overlay {
-      position: absolute;
-      border: 2px solid #d97706;
-      background: rgba(217, 119, 6, 0.15);
-      border-radius: 4px;
-      padding: 6px;
-      font-family: monospace;
-      font-size: 10px;
-      color: #fbbf24;
-      left: 38%;
-      top: 35%;
-      width: 170px;
-      height: 90px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    /* ==========================================================================
-       HARDWARE GALLERY (RASPBERRY PI 5, E-NOSE, MMWAVE RADAR)
-       ========================================================================== */
-    .hw-gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
-      margin-top: 36px;
-    }
-    .hw-item-card {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .hw-item-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-      border-color: var(--border-dark);
-    }
-    .hw-img-container {
-      width: 100%;
-      height: 220px;
-      background: #f8fafc;
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-    }
-    .hw-img-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .hw-item-body {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      justify-content: space-between;
-    }
-    .hw-tag {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--blue);
-      margin-bottom: 4px;
-    }
-    .hw-name {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--navy);
-      margin-bottom: 8px;
-    }
-    .hw-text {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 14px;
-    }
-    .hw-spec-pill {
-      background: var(--surface-subtle);
-      border: 1px solid var(--border);
-      padding: 6px 10px;
-      border-radius: var(--radius-sm);
-      font-size: 11px;
-      color: var(--text-secondary);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* Comparison Table */
-    .compare-container {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      margin-top: 36px;
-    }
-    .clean-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      text-align: left;
-    }
-    .clean-table th {
-      background: var(--surface-subtle);
-      padding: 12px 16px;
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
-    }
-    .clean-table td {
-      padding: 13px 16px;
-      border-bottom: 1px solid var(--border);
-      color: var(--text-secondary);
-    }
-    .clean-table tr:last-child td { border-bottom: none; }
-    .clean-table tr:hover td { background: var(--surface-subtle); }
-    .clean-table td b { color: var(--navy); }
-
-    /* Four-Case Decision Matrix */
-    .decision-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-top: 36px;
-    }
-    .decision-card {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 18px;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .decision-card.c-normal { border-top: 4px solid var(--green); }
-    .decision-card.c-check { border-top: 4px solid var(--amber); }
-    .decision-card.c-alert { border-top: 4px solid var(--red); }
-    .decision-top { margin-bottom: 12px; }
-    .decision-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
-    .decision-heading { font-size: 16px; font-weight: 800; margin: 4px 0; }
-    .decision-heading.green { color: var(--green); }
-    .decision-heading.amber { color: var(--amber); }
-    .decision-heading.red { color: var(--red); }
-    .decision-criteria { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
-    .decision-sop {
-      background: var(--surface-subtle);
-      border: 1px solid var(--border);
-      padding: 8px 10px;
-      border-radius: var(--radius-sm);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    /* Command Center Callout Banner */
-    .banner-cta {
-      background: var(--navy);
-      color: #ffffff;
-      border-radius: var(--radius-md);
-      padding: 44px;
-      text-align: center;
-      margin-top: 60px;
-    }
-    .banner-cta h2 { font-size: 28px; font-weight: 900; margin-bottom: 12px; }
-    .banner-cta p { font-size: 15px; color: #cbd5e1; max-width: 640px; margin: 0 auto 24px; }
-
-    /* Footer */
-    .footer {
-      background: #ffffff;
-      border-top: 1px solid var(--border);
-      padding: 36px 0;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    /* Mobile Menu Toggle Button */
-    .mobile-menu-btn {
-      display: none;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      width: 42px;
-      height: 42px;
-      padding: 0;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--navy);
-      font-size: 22px;
-      line-height: 1;
-      transition: background 0.15s ease;
-    }
-    .mobile-menu-btn:hover { background: var(--surface-subtle); }
-
-    /* Mobile Drawer & Backdrop */
-    .mobile-backdrop {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(3px);
-      z-index: 1099;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
-    .mobile-backdrop.active {
-      display: block;
-      opacity: 1;
-    }
-
-    .mobile-drawer {
-      position: fixed;
-      top: 0;
-      right: -320px;
-      width: 290px;
-      height: 100vh;
-      background: #ffffff;
-      box-shadow: -4px 0 24px rgba(0, 0, 0, 0.18);
-      z-index: 1100;
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      overflow-y: auto;
-    }
-    .mobile-drawer.active {
-      transform: translateX(-320px);
-    }
-    .mobile-drawer-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 18px;
-    }
-    .mobile-drawer-close {
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: var(--surface-subtle);
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-secondary);
-    }
-    .mobile-drawer-links {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .mobile-nav-link {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      transition: all 0.15s ease;
-      display: block;
-    }
-    .mobile-nav-link:hover, .mobile-nav-link:active {
-      background: var(--surface-subtle);
-      color: var(--blue);
-    }
-    .mobile-drawer-cta {
-      margin-top: 20px;
-      padding-top: 18px;
-      border-top: 1px solid var(--border);
-    }
-
-    /* Table Scroll Wrapping */
-    .table-responsive {
-      width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: #ffffff;
-      margin-top: 36px;
-      box-shadow: var(--shadow-sm);
-    }
-    .table-responsive .clean-table {
-      min-width: 620px;
-      width: 100%;
-      margin: 0;
-    }
-
-    /* Enhanced Responsive Rules */
-    @media (max-width: 1024px) {
-      .hero-grid, .officer-section { grid-template-columns: 1fr; }
-      .hw-gallery-grid { grid-template-columns: repeat(2, 1fr); }
-      .decision-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 768px) {
-      .section { padding: 48px 0; }
-      .hero { padding: 36px 0 44px; }
-      .container { padding: 0 16px; }
-      .nav-links { display: none; }
-      .mobile-menu-btn { display: flex; }
-      .nav-sub { display: none; }
-      .hero-stats { grid-template-columns: 1fr; gap: 10px; }
-      .cctv-flow-container { flex-direction: column; gap: 6px; }
-      .cctv-flow-arrow { transform: rotate(90deg); margin: 2px 0; }
-      .cctv-flow-node { width: 100%; }
-      .cctv-display-top { flex-direction: column; gap: 4px; font-size: 10px; }
-      .cctv-box-overlay { left: 8%; width: 84%; font-size: 9.5px; }
-      .banner-cta { padding: 28px 16px; }
-      .banner-cta h2 { font-size: 22px; }
-      .footer-inner { flex-direction: column; text-align: center; gap: 12px; }
-    }
-    @media (max-width: 640px) {
-      .hw-gallery-grid, .decision-grid { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 26px; }
-      .hero p.lead { font-size: 14px; }
-      .hero-buttons { flex-direction: column; }
-      .hero-buttons .btn { width: 100%; justify-content: center; }
-      .officer-section { padding: 18px; }
-      .cctv-infra-card { padding: 18px; }
-      .hw-img-container { height: 180px; }
-      .hw-item-body { padding: 16px; }
-      .navbar { height: 60px; }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRINETRA — Railway Security Intelligence Platform</title>
+  <meta name="description" content="TRINETRA Railway Security Operations Center. Integrated railway screening platform combining handheld field units and quadruped robotics.">
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="css/command_center.css">
 </head>
 <body>
 
-  <!-- =====================================================================
-       NAVIGATION
-       ===================================================================== -->
-  <header class="navbar">
-    <div class="container nav-inner">
-      <a href="index.html" class="nav-brand">
-        <div class="nav-logo-box">🚆</div>
-        <div>
-          <div class="nav-title">TRINETRA</div>
-          <div class="nav-sub">SIH 26026 · MINISTRY OF RAILWAYS</div>
+<div class="cc-app" id="cc-app">
+
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div class="cc-sidebar-backdrop" id="cc-sidebar-backdrop" onclick="closeSidebar()"></div>
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="cc-sidebar" id="cc-sidebar">
+    <div class="cc-sidebar-head">
+      <div class="cc-sidebar-head-brand">
+        <div class="cc-sidebar-emblem">TRN</div>
+        <div class="cc-sidebar-brand">
+          <div class="cc-sidebar-title">TRINETRA</div>
+          <div class="cc-sidebar-subtitle">RAILWAY SECURITY SOC</div>
         </div>
-      </a>
-
-      <!-- Desktop Navigation -->
-      <nav class="nav-links">
-        <a href="#officer">Officer Presence</a>
-        <a href="#infrastructure">Existing CCTV</a>
-        <a href="#hardware">Hardware BOM</a>
-        <a href="#platforms">Field Platforms</a>
-        <a href="#decision">Decision Logic</a>
-        <a href="command_center.html" class="btn-command-center">
-          <span>Live Command Center</span>
-          <span>↗</span>
-        </a>
-      </nav>
-
-      <!-- Mobile Hamburger Button -->
-      <button type="button" class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Open Navigation Menu">
-        ☰
-      </button>
-    </div>
-  </header>
-
-  <!-- Mobile Drawer & Overlay -->
-  <div class="mobile-backdrop" id="mobile-backdrop"></div>
-  <aside class="mobile-drawer" id="mobile-drawer" aria-label="Mobile Navigation">
-    <div class="mobile-drawer-head">
-      <div class="nav-brand">
-        <div class="nav-logo-box" style="width:30px; height:30px; font-size:15px;">🚆</div>
-        <div class="nav-title" style="font-size:15px;">TRINETRA</div>
       </div>
-      <button type="button" class="mobile-drawer-close" id="mobile-drawer-close" aria-label="Close Navigation Menu">
-        ✕
-      </button>
+      <button class="cc-sidebar-close-btn" id="cc-sidebar-close" onclick="closeSidebar()" type="button" aria-label="Close navigation sidebar">✕</button>
     </div>
-    <nav class="mobile-drawer-links">
-      <a href="#officer" class="mobile-nav-link" onclick="closeMobileMenu()">👮 Officer Presence</a>
-      <a href="#infrastructure" class="mobile-nav-link" onclick="closeMobileMenu()">📹 Existing CCTV</a>
-      <a href="#hardware" class="mobile-nav-link" onclick="closeMobileMenu()">⚙️ Hardware BOM</a>
-      <a href="#platforms" class="mobile-nav-link" onclick="closeMobileMenu()">🤖 Field Platforms</a>
-      <a href="#decision" class="mobile-nav-link" onclick="closeMobileMenu()">📊 Decision Logic</a>
-    </nav>
-    <div class="mobile-drawer-cta">
-      <a href="command_center.html" class="btn-command-center" style="width:100%; justify-content:center; padding:12px 16px;">
-        <span>Live Command Center</span>
-        <span>↗</span>
-      </a>
+
+    <!-- Navigation (Generated dynamically by JS based on department) -->
+    <nav class="cc-sidebar-nav" id="sidebar-nav"></nav>
+
+    <!-- Officer Profile Card Footer -->
+    <div class="cc-sidebar-foot">
+      <div class="cc-officer-card">
+        <div class="cc-officer-avatar" id="sidebar-officer-avatar">👮</div>
+        <div class="cc-officer-details">
+          <div class="cc-officer-name" id="sidebar-officer-name">Rahul Sharma</div>
+          <div class="cc-officer-meta"><span class="cc-officer-id" id="sidebar-officer-id">RPF-04217</span> · <span id="sidebar-officer-rank">ASI</span></div>
+        </div>
+      </div>
     </div>
   </aside>
 
-  <!-- =====================================================================
-       HERO SECTION
-       ===================================================================== -->
-  <section class="hero">
-    <div class="container hero-grid">
-      <div>
-        <div class="hero-eyebrows">
-          <span class="badge blue">Smart India Hackathon 2026</span>
-          <span class="badge">Problem Statement ID: 26026</span>
-          <span class="badge green">Theme: Hardware & Cybersecurity</span>
+  <!-- ===================== APP BODY ===================== -->
+  <main class="cc-app-body">
+
+    <!-- Top Bar -->
+    <header class="cc-topbar">
+      <div class="cc-topbar-left">
+        <button class="cc-mobile-toggle-btn" id="cc-mobile-toggle" onclick="toggleSidebar()" type="button" aria-label="Open navigation sidebar">
+          ☰
+        </button>
+        <div class="cc-platform-title">TRINETRA</div>
+        <div class="cc-station-badge">
+          <span>STATION:</span>
+          <select id="station-select" class="cc-station-select">
+            <option value="nagpur">NAGPUR JUNCTION (Nagpur Div)</option>
+            <option value="mumbai">MUMBAI CSMT (Mumbai Div)</option>
+            <option value="delhi">NEW DELHI JUNCTION (Delhi Div)</option>
+          </select>
         </div>
-
-        <h1>
-          Real-Time Field Screening of Narcotics & Explosives across Indian Railways
-        </h1>
-
-        <p class="lead">
-          An AI-enabled multimodal screening ecosystem combining human-operated handheld units and DRDO-inspired autonomous quadruped robotics. Built with 60–64 GHz mmWave radar, electronic-nose gas sensor fusion, and on-device edge AI on Raspberry Pi 5.
-        </p>
-
-        <!-- Document Metrics -->
-        <div class="hero-stats">
-          <div class="hero-stat">
-            <small>RPF Seizures (2025)</small>
-            <b>₹300+ Crores</b>
-          </div>
-          <div class="hero-stat">
-            <small>Transit Share (NCB)</small>
-            <b>15% – 20%</b>
-          </div>
-          <div class="hero-stat">
-            <small>Documented Cases</small>
-            <b>2,100+ Instances</b>
-          </div>
-        </div>
-
-        <div class="hero-buttons">
-          <a href="command_center.html" class="btn primary">
-            <span>Launch Live Command Center ↗</span>
-          </a>
-          <a href="#hardware" class="btn outline">
-            <span>Explore Hardware Components ↓</span>
-          </a>
-        </div>
+        <div class="cc-status-indicator normal" id="station-status-pill">NORMAL OPERATIONS</div>
       </div>
 
-      <!-- Right Stage: Hardware Preview Box -->
-      <div class="hero-card" style="background:#ffffff; border:1px solid var(--border); border-radius:var(--radius-md); padding:20px; box-shadow:var(--shadow-sm);">
-        <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border); margin-bottom:14px;">
-          <span style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--navy);">Prototype Hardware Modules</span>
-          <span class="badge blue">Edge AI</span>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
-          <div style="background:var(--surface-subtle); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; text-align:center;">
-            <img src="assets/raspberry_pi_5.jpg" alt="Raspberry Pi 5" style="width:100%; height:105px; object-fit:contain; border-radius:4px; margin-bottom:6px; background:#fff;">
-            <span style="font-size:11px; font-weight:700;">Raspberry Pi 5</span>
-          </div>
-          <div style="background:var(--surface-subtle); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; text-align:center;">
-            <img src="assets/enose_sensor.jpg" alt="E-Nose Gas Array" style="width:100%; height:105px; object-fit:contain; border-radius:4px; margin-bottom:6px; background:#fff;">
-            <span style="font-size:11px; font-weight:700;">E-Nose Gas Array</span>
-          </div>
-        </div>
-
-        <div style="background:var(--surface-subtle); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; text-align:center;">
-          <img src="assets/mmwave_radar.jpg" alt="IWR6843AOPEVM mmWave Radar" style="width:100%; height:110px; object-fit:contain; border-radius:4px; margin-bottom:6px; background:#fff;">
-          <span style="font-size:11px; font-weight:700;">Texas Instruments IWR6843AOPEVM 60-64 GHz Radar</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =====================================================================
-       SECTION: REAL HUMAN / OFFICER PRESENCE
-       ===================================================================== -->
-  <section class="section" id="officer">
-    <div class="container">
-      <div class="section-eyebrow">01 / FIELD OPERATIONS & PERSONNEL</div>
-      <h2 class="section-title">DESIGNED FOR THE PEOPLE WHO SECURE THE NETWORK</h2>
-      <p class="section-desc">
-        Trinetra is designed to assist railway security personnel with fast, understandable and actionable screening information.
-      </p>
-
-      <div class="officer-section">
-        <!-- Representative Security Officer Card -->
-        <div class="officer-badge-card">
-          <div class="officer-avatar-box">
-            <div class="officer-emblem">👮</div>
-            <div class="officer-identity">
-              <h4>Insp. Rajesh Kumar, RPF</h4>
-              <div>Railway Protection Force · Nagpur Division</div>
-              <span class="status-tag clear" style="margin-top:4px;">● On-Duty Station Checkpoint</span>
-            </div>
-          </div>
-
-          <div class="officer-specs-list">
-            <div class="officer-spec-item"><span>Deployment Area</span><b>Platform 2 Baggage Gate</b></div>
-            <div class="officer-spec-item"><span>Assigned Hardware</span><b>Trinetra Handheld (H-014)</b></div>
-            <div class="officer-spec-item"><span>Average Scan Latency</span><b>5 to 10 seconds / item</b></div>
-            <div class="officer-spec-item"><span>Clearance Decision</span><b>Normal / Suspicious / High Risk</b></div>
-            <div class="officer-spec-item"><span>Duty Status</span><b>Online · CCTV Correlated</b></div>
-          </div>
-        </div>
-
-        <!-- Descriptive Operational Text -->
-        <div>
-          <h3 style="font-size:20px; font-weight:800; color:var(--navy); margin-bottom:12px;">
-            Actionable Decision Support for Frontline Security
-          </h3>
-          <p style="font-size:14px; color:var(--text-secondary); line-height:1.6; margin-bottom:16px;">
-            RPF officers on platform checkpoints cannot afford complex laboratory instruments or slow analysis cycles. Trinetra provides an immediate, clear visual screening recommendation on a 5-inch capacitive touchscreen, accompanied by standard operating procedure (SOP) instructions.
-          </p>
-
-          <div style="background:var(--surface-subtle); border-left:3px solid var(--blue); padding:14px 18px; border-radius:0 4px 4px 0; margin-bottom:18px;">
-            <div style="font-size:12px; font-weight:800; color:var(--navy); text-transform:uppercase; margin-bottom:4px;">NON-INTRUSIVE RAPID SCREENING</div>
-            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
-              Officers inspect luggage, cartons, and passengers rapidly without opening every zipper or breaking seals unless a verified physical or vapor anomaly is flagged.
-            </p>
-          </div>
-
-          <div style="display:flex; gap:10px;">
-            <span class="badge">Representative Demo Identity</span>
-            <span class="badge green">Tested with RPF Workflow</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =====================================================================
-       SECTION: WORKS WITH EXISTING INFRASTRUCTURE (CCTV INTEGRATION)
-       ===================================================================== -->
-  <section class="section" id="infrastructure" style="background:#ffffff;">
-    <div class="container">
-      <div class="section-eyebrow">02 / SURVEILLANCE COMPATIBILITY</div>
-      <h2 class="section-title">WORKS WITH EXISTING INFRASTRUCTURE</h2>
-      <p class="section-desc">
-        Trinetra is designed to complement existing railway surveillance systems. It does not replace station CCTV; it enriches camera streams with multi-sensor screening correlation.
-      </p>
-
-      <div class="cctv-infra-card">
-        <!-- Exact Architecture Pipeline from prompt -->
-        <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--navy); letter-spacing:0.05em;">
-          INTEGRATION PIPELINE
-        </div>
-
-        <div class="cctv-flow-container">
-          <div class="cctv-flow-node">
-            <div class="cctv-flow-title">EXISTING RAILWAY CAMERA</div>
-            <small>Standard Station CCTV Network</small>
-          </div>
-          <div class="cctv-flow-arrow">↓</div>
-          <div class="cctv-flow-node">
-            <div class="cctv-flow-title">VIDEO / IMAGE STREAM</div>
-            <small>RTSP Feed Transmission</small>
-          </div>
-          <div class="cctv-flow-arrow">↓</div>
-          <div class="cctv-flow-node active-node">
-            <div class="cctv-flow-title">TRINETRA ANALYTICS LAYER</div>
-            <small>Edge AI Correlation Model</small>
-          </div>
-          <div class="cctv-flow-arrow">↓</div>
-          <div class="cctv-flow-node">
-            <div class="cctv-flow-title">OBJECT / PERSON / LUGGAGE</div>
-            <small>Bounding Boxes & Dwell Time</small>
-          </div>
-          <div class="cctv-flow-arrow">↓</div>
-          <div class="cctv-flow-node" style="border-color:var(--amber);">
-            <div class="cctv-flow-title">SECURITY EVENT</div>
-            <small>Matched with Handheld/Quad Scan</small>
-          </div>
-        </div>
-
-        <!-- Realistic Railway CCTV Frame View -->
-        <div class="cctv-display-box">
-          <div class="cctv-display-top">
-            <span>FEED: CAM-04 · PLATFORM 2 NORTH BAGGAGE CHECKPOINT</span>
-            <span>STATUS: RECORDING (25 FPS 1080P)</span>
-            <span>21:42:00 IST</span>
-          </div>
-
-          <div class="cctv-frame-mock">
-            <div style="position:absolute; left:20px; top:20px; font-size:11px; color:#64748b; font-family:monospace;">
-              STATION: NAGPUR JUNCTION · CENTRAL RAILWAY<br>
-              SURVEILLANCE SECTOR: NORTH FOB CONCOURSE GATE
-            </div>
-
-            <!-- Analytics Overlay Box -->
-            <div class="cctv-box-overlay">
-              <span>Baggage Detection [0.96]</span>
-              <span>Dwell: 1m 48s · Match: SCN-84919</span>
-              <span>Class: Hardcase Trunk Anomaly</span>
-            </div>
-
-            <div style="font-size:12px; color:#475569; font-family:monospace; margin-top:140px;">
-              [ Correlated with Trinetra Handheld H-022 Screening Event ]
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =====================================================================
-       SECTION: HARDWARE BOM & IMAGES
-       ===================================================================== -->
-  <section class="section" id="hardware">
-    <div class="container">
-      <div class="section-eyebrow">03 / GROUNDED HARDWARE BOM</div>
-      <h2 class="section-title">Hardware Architecture & Sensor Selection</h2>
-      <p class="section-desc">
-        Every sensor and processor is selected from the uploaded SIH 26026 engineering research for low-power edge computing, high sensitivity, and rugged railway field reliability.
-      </p>
-
-      <div class="hw-gallery-grid">
-        <!-- 1. Raspberry Pi 5 -->
-        <div class="hw-item-card">
-          <div class="hw-img-container">
-            <img src="assets/raspberry_pi_5.jpg" alt="Raspberry Pi 5 Single Board Computer">
-          </div>
-          <div class="hw-item-body">
-            <div>
-              <div class="hw-tag">Edge Processing Computer</div>
-              <h3 class="hw-name">Raspberry Pi 5</h3>
-              <p class="hw-text">
-                Central edge computer featuring a 2.4 GHz quad-core 64-bit Arm Cortex-A76 processor. Executes sensor fusion and on-device neural network inference in under 42ms while operating offline.
-              </p>
-            </div>
-            <div class="hw-spec-pill">Cortex-A76 @ 2.4 GHz · 4GB LPDDR4X · 40-pin GPIO</div>
-          </div>
-        </div>
-
-        <!-- 2. E-Nose Sensor Array -->
-        <div class="hw-item-card">
-          <div class="hw-img-container">
-            <img src="assets/enose_sensor.jpg" alt="E-Nose Gas Sensor Array Module">
-          </div>
-          <div class="hw-item-body">
-            <div>
-              <div class="hw-tag">Chemical / Vapor Sensing</div>
-              <h3 class="hw-name">E-Nose Gas Sensor Array</h3>
-              <p class="hw-text">
-                Combines Bosch BME688 (AI gas scanner), Sensirion SGP40 (digital VOC index), and MiCS-6814 (3-channel analog array) with a 16-bit ADS1115 ADC and active pneumatic micro-blower.
-              </p>
-            </div>
-            <div class="hw-spec-pill">BME688 + SGP40 + MiCS-6814 + ADS1115 ADC</div>
-          </div>
-        </div>
-
-        <!-- 3. mmWave Radar -->
-        <div class="hw-item-card">
-          <div class="hw-img-container">
-            <img src="assets/mmwave_radar.jpg" alt="Texas Instruments IWR6843AOPEVM mmWave Radar">
-          </div>
-          <div class="hw-item-body">
-            <div>
-              <div class="hw-tag">Physical / Dielectric Sensing</div>
-              <h3 class="hw-name">IWR6843AOPEVM mmWave Radar</h3>
-              <p class="hw-text">
-                Texas Instruments 60–64 GHz FMCW millimeter-wave radar with integrated Antenna-on-Package (AoP). Detects concealed dielectric bulk and structural anomalies without opening luggage.
-              </p>
-            </div>
-            <div class="hw-spec-pill">60-64 GHz FMCW · 3 Tx / 4 Rx · 4GHz Bandwidth</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Why X-Ray is NOT used Notice -->
-      <div style="background:#ffffff; border:1px solid var(--border); border-left:4px solid var(--navy); border-radius:var(--radius-sm); padding:20px; margin-top:28px; box-shadow:var(--shadow-sm);">
-        <div style="font-size:13px; font-weight:800; color:var(--navy); margin-bottom:4px;">
-          Architectural Note: Why X-Ray is NOT Used in the Handheld System
-        </div>
-        <p style="font-size:13px; color:var(--text-secondary); line-height:1.6;">
-          Conventional X-ray inspection is intentionally not included in the handheld solution. Conventional X-ray machines are heavy, bulky, expensive, and generate ionizing radiation hazards requiring lead shielding and stationary gantries. Trinetra uses safe, non-ionizing <b>60–64 GHz mmWave radar + E-Nose gas sensing + Edge AI</b> for rapid, lightweight first-line screening.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- =====================================================================
-       SECTION: PLATFORMS COMPARISON
-       ===================================================================== -->
-  <section class="section" id="platforms" style="background:#ffffff;">
-    <div class="container">
-      <div class="section-eyebrow">04 / TWO COMPLEMENTARY PLATFORMS</div>
-      <h2 class="section-title">Handheld vs Quadruped Platform Comparison</h2>
-      <p class="section-desc">
-        The handheld device addresses speed and portability for close-range screening, while the quadruped robot addresses reach, remote inspection, under-carriage crawl, and hazardous terrain.
-      </p>
-
-      <div class="table-responsive">
-        <table class="clean-table">
-          <thead>
-            <tr>
-              <th>Evaluation Parameter</th>
-              <th>Platform 01: Handheld Device</th>
-              <th>Platform 02: Quadruped Robot</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><b>Primary Operator</b></td>
-              <td>RPF Field Constable / Ticket Examiner</td>
-              <td>RPF Control Operator / Autonomous Duty</td>
-            </tr>
-            <tr>
-              <td><b>Mobility & Form</b></td>
-              <td>Lightweight, carried by one person</td>
-              <td>12-DOF Four-legged mobile robotic platform</td>
-            </tr>
-            <tr>
-              <td><b>Primary Deployment</b></td>
-              <td>Station entry, baggage checkpoints, train coaches</td>
-              <td>Railway yards, switching tracks, tunnels, dark culverts</td>
-            </tr>
-            <tr>
-              <td><b>Under-carriage Inspection</b></td>
-              <td>Limited / Manual mirror inspection</td>
-              <td><b>Strong use case</b> (crawls beneath wagons safely)</td>
-            </tr>
-            <tr>
-              <td><b>Night & Low-Light Patrol</b></td>
-              <td>Operator-assisted with flashlight</td>
-              <td><b>Autonomous</b> with thermal imaging & spotlight</td>
-            </tr>
-            <tr>
-              <td><b>GPS-Denied Operation</b></td>
-              <td>Local logging; GPS optional</td>
-              <td><b>Critical requirement</b> (LiDAR SLAM + IMU inside tunnels)</td>
-            </tr>
-            <tr>
-              <td><b>Gas / VOC Screening</b></td>
-              <td>Integrated chamber with micro-fan</td>
-              <td>Snout-mounted gas sensing payload</td>
-            </tr>
-            <tr>
-              <td><b>Operator Interface</b></td>
-              <td>5-inch capacitive touchscreen</td>
-              <td>Remote teleoperation console & Central Dashboard</td>
-            </tr>
-            <tr>
-              <td><b>Autonomy Level</b></td>
-              <td>Operator-triggered rapid scan (5–10s)</td>
-              <td>Supervised semi-autonomous & waypoint patrol</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- =====================================================================
-       SECTION: FOUR-CASE DECISION MATRIX
-       ===================================================================== -->
-  <section class="section" id="decision">
-    <div class="container">
-      <div class="section-eyebrow">05 / DECISION SUPPORT LOGIC</div>
-      <h2 class="section-title">Four-Case Screening Decision Matrix</h2>
-      <p class="section-desc">
-        Trinetra presents defensible operational classes rather than claiming absolute chemical identification. This provides actionable decision support for frontline RPF personnel.
-      </p>
-
-      <div class="decision-grid">
-        <div class="decision-card c-normal">
-          <div class="decision-top">
-            <div class="decision-label">Case 01</div>
-            <div class="decision-heading green">✓ NORMAL</div>
-            <div class="decision-criteria">Radar: Low · Gas: Low</div>
-            <p style="font-size: 12px; color: var(--text-secondary);">Both physical structure and vapor emissions match ambient baseline conditions.</p>
-          </div>
-          <div class="decision-sop">ACTION: Continue normal passenger clearance.</div>
-        </div>
-
-        <div class="decision-card c-check">
-          <div class="decision-top">
-            <div class="decision-label">Case 02</div>
-            <div class="decision-heading amber">⚠️ SUSPICIOUS</div>
-            <div class="decision-criteria">Radar: High · Gas: Low</div>
-            <p style="font-size: 12px; color: var(--text-secondary);">Dense concealed object or shielded container detected without active vapor release.</p>
-          </div>
-          <div class="decision-sop">ACTION: Secondary manual inspection under CCTV.</div>
-        </div>
-
-        <div class="decision-card c-check">
-          <div class="decision-top">
-            <div class="decision-label">Case 03</div>
-            <div class="decision-heading amber">⚠️ SUSPICIOUS</div>
-            <div class="decision-criteria">Radar: Low · Gas: High</div>
-            <p style="font-size: 12px; color: var(--text-secondary);">Elevated VOC, solvent or precursor signature detected without structural anomaly.</p>
-          </div>
-          <div class="decision-sop">ACTION: Inspect inner lining & swab baggage seams.</div>
-        </div>
-
-        <div class="decision-card c-alert">
-          <div class="decision-top">
-            <div class="decision-label">Case 04</div>
-            <div class="decision-heading red">🚨 HIGH RISK</div>
-            <div class="decision-criteria">Radar: High · Gas: High</div>
-            <p style="font-size: 12px; color: var(--text-secondary);">Both dense physical anomaly and strong chemical vapor patterns confirmed.</p>
-          </div>
-          <div class="decision-sop">ACTION: Immediate 50m cordon + Alert QRT / EOD.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =====================================================================
-       TRINETRA SECURE ACCESS & CALL TO ACTION
-       ===================================================================== -->
-  <section class="section" style="background:#ffffff;">
-    <div class="container">
-      <div style="max-width:680px; margin:0 auto; background:var(--surface-subtle); border:1px solid var(--border-medium); border-radius:var(--radius-md); padding:28px; box-shadow:var(--shadow-sm); text-align:center;">
-        <div style="font-size:11px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">
-          TRINETRA COMMAND CENTER · AUTHORIZED ACCESS
-        </div>
-        <h3 style="font-size:22px; font-weight:800; color:var(--navy); margin-bottom:6px;">
-          TRINETRA SECURE ACCESS
-        </h3>
-        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:20px;">
-          Access the unified central monitoring platform receiving real-time telemetry from Handhelds, Quadrupeds, and Station CCTV feeds.
-        </p>
-
-        <div style="background:#ffffff; border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; text-align:left; margin-bottom:20px;">
-          <div class="cc-spec-row" style="display:flex; justify-content:space-between; font-size:12px; padding:4px 0;"><span>Officer:</span><b>Insp. Rajesh Kumar, RPF</b></div>
-          <div class="cc-spec-row" style="display:flex; justify-content:space-between; font-size:12px; padding:4px 0;"><span>Role:</span><b>Railway Security Officer</b></div>
-          <div class="cc-spec-row" style="display:flex; justify-content:space-between; font-size:12px; padding:4px 0;"><span>Authorization:</span><span style="color:var(--green); font-weight:700;">● VERIFIED</span></div>
-          <div class="cc-spec-row" style="display:flex; justify-content:space-between; font-size:12px; padding:4px 0;"><span>Station / Zone:</span><b>Nagpur Division (Central Railway)</b></div>
-          <div class="cc-spec-row" style="display:flex; justify-content:space-between; font-size:12px; padding:4px 0; border-bottom:none;"><span>Status:</span><span class="badge">DEMO ACCOUNT</span></div>
-        </div>
-
-        <a href="command_center.html" class="btn primary" style="width:100%; justify-content:center; padding:12px;">
-          <span>ENTER COMMAND CENTER ↗</span>
+      <div class="cc-topbar-right">
+        <a href="overview.html" class="cc-site-btn" target="_blank" title="Open TRINETRA Hardware Specs & System Overview Website">
+          <span>🌐 System Overview</span>
+          <span>↗</span>
         </a>
+
+        <div class="cc-clock" id="topbar-clock">20:42:11 IST</div>
+
+        <!-- Role Quick Switcher (Demo) -->
+        <div class="cc-dept-switch-wrap" title="Switch operational department">
+          <span class="cc-dept-switch-label">Role:</span>
+          <select id="dept-select" class="cc-dept-select">
+            <option value="field_ops">Field Operations</option>
+            <option value="technical">Technical &amp; Engineering</option>
+            <option value="operations">Operations &amp; Control</option>
+            <option value="administration">Railway Administration</option>
+            <option value="executive">Executive Command</option>
+            <option value="sys_admin">System Administration</option>
+          </select>
+        </div>
+
+        <button class="cc-notif-btn" title="Live Notifications" type="button">
+          🔔 <span class="cc-notif-count">1</span>
+        </button>
+
+        <button class="cc-logout-btn" onclick="logout()" type="button">Logout</button>
+      </div>
+    </header>
+
+    <!-- Workspace Panes -->
+    <div class="cc-workspace">
+
+      <!-- ================= PANE 1: HOME (LOCATION + OPERATIONS) ================= -->
+      <div class="cc-pane active" id="pane-home">
+
+        <!-- Station Operational Summary -->
+        <div class="panel-card" style="margin-bottom: 14px;">
+          <div class="panel-head">
+            <div class="panel-title" id="station-title-display">NAGPUR JUNCTION — Nagpur Division · Central Railway</div>
+            <div class="panel-meta">STATION CODE: NGP · 4 PLATFORMS · 6 TRINETRA DEPLOYED UNITS</div>
+          </div>
+          <div class="panel-body">
+            <div class="station-metrics-grid">
+              <div class="sm-cell">
+                <div class="sm-label">Screenings Today</div>
+                <div class="sm-value" id="sm-today">2,842</div>
+              </div>
+              <div class="sm-cell check">
+                <div class="sm-label">Awaiting Verification</div>
+                <div class="sm-value" id="sm-verif">1</div>
+              </div>
+              <div class="sm-cell">
+                <div class="sm-label">Active Security Cases</div>
+                <div class="sm-value" id="sm-open">3</div>
+              </div>
+              <div class="sm-cell">
+                <div class="sm-label">Connected TRINETRA Units</div>
+                <div class="sm-value" id="sm-devs">6</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-Column Operational Grid -->
+        <div class="cc-ops-grid">
+
+          <!-- Left Column: Schematic & CCTV -->
+          <div class="cc-ops-left">
+
+            <!-- Railway Station Schematic -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div class="panel-title">RAILWAY STATION OPERATIONAL SCHEMATIC</div>
+                <div class="station-legend">
+                  <div class="legend-item"><span class="legend-dot hnd"></span> Handheld (H)</div>
+                  <div class="legend-item"><span class="legend-dot qdr"></span> Quadruped (Q)</div>
+                  <div class="legend-item"><span class="legend-dot cctv"></span> CCTV</div>
+                  <div class="legend-item"><span class="legend-dot alert"></span> Active Flag</div>
+                </div>
+              </div>
+              <div class="panel-body" style="padding: 0;">
+                <div class="station-svg-container" id="station-schematic-svg"></div>
+              </div>
+            </div>
+
+            <!-- Railway Surveillance CCTV (4 Feeds) -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div class="panel-title">RAILWAY SURVEILLANCE FEEDS (CCTV SPATIAL CONTEXT)</div>
+                <div class="panel-meta">AREA MONITORING · 4 ACTIVE CHANNELS</div>
+              </div>
+              <div class="panel-body">
+                <div class="cctv-grid">
+                  <div class="cctv-cell">
+                    <div class="cctv-head">
+                      <span>CAM-04 · PLATFORM 3 SCREENING LANE</span>
+                      <span class="pill check">CHECKPOINT</span>
+                    </div>
+                    <canvas id="cctv-p3" class="cctv-canvas" width="320" height="180"></canvas>
+                    <div class="cctv-bot">
+                      <span>TARGET SPATIAL TRACKING</span>
+                      <span>LIVE</span>
+                    </div>
+                  </div>
+
+                  <div class="cctv-cell">
+                    <div class="cctv-head">
+                      <span>CAM-01 · CONCOURSE GATE A</span>
+                      <span class="pill clear">NORMAL</span>
+                    </div>
+                    <canvas id="cctv-concourse" class="cctv-canvas" width="320" height="180"></canvas>
+                    <div class="cctv-bot">
+                      <span>PASSENGER CIRCULATION</span>
+                      <span>LIVE</span>
+                    </div>
+                  </div>
+
+                  <div class="cctv-cell">
+                    <div class="cctv-head">
+                      <span>CAM-02 · MAIN ENTRANCE PORCH</span>
+                      <span class="pill clear">NORMAL</span>
+                    </div>
+                    <canvas id="cctv-entry" class="cctv-canvas" width="320" height="180"></canvas>
+                    <div class="cctv-bot">
+                      <span>ENTRY POINT MONITOR</span>
+                      <span>LIVE</span>
+                    </div>
+                  </div>
+
+                  <div class="cctv-cell">
+                    <div class="cctv-head">
+                      <span>CAM-08 · SERVICE &amp; DEPOT YARD</span>
+                      <span class="pill clear">NORMAL</span>
+                    </div>
+                    <canvas id="cctv-yard" class="cctv-canvas" width="320" height="180"></canvas>
+                    <div class="cctv-bot">
+                      <span>FREIGHT &amp; TRACKS</span>
+                      <span>LIVE</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- end cc-ops-left -->
+
+          <!-- Right Column: Live Security Events & Info -->
+          <div class="cc-ops-right">
+
+            <!-- Live Security Events Feed -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div class="panel-title">LIVE SECURITY EVENTS</div>
+                <div class="panel-meta">REAL-TIME STREAM</div>
+              </div>
+              <div class="panel-body">
+                <div class="events-stream" id="events-stream-list"></div>
+              </div>
+            </div>
+
+            <!-- Station Information List -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div class="panel-title">STATION OPERATIONAL STATUS</div>
+              </div>
+              <div class="panel-body">
+                <div class="st-info-list" id="st-compact-info"></div>
+              </div>
+            </div>
+
+          </div><!-- end cc-ops-right -->
+
+        </div><!-- end cc-ops-grid -->
+
+      </div><!-- end pane-home -->
+
+      <!-- ================= PANE 2: MY ASSIGNMENTS ================= -->
+      <div class="cc-pane" id="pane-assignments">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">MY ASSIGNED VERIFICATIONS (FIELD OPERATIONS)</div>
+            <div class="panel-meta">ACTIONABLE DISPATCH QUEUE</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Case ID</th>
+                    <th>Security Event</th>
+                    <th>Location</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="assignments-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 3: SCREENINGS ================= -->
+      <div class="cc-pane" id="pane-screenings">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">TRINETRA SCREENING LOG (HANDHELD &amp; QUADRUPED)</div>
+            <div class="panel-meta">CRYPTOGRAPHIC EVENT LEDGER</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Event ID</th>
+                    <th>Timestamp</th>
+                    <th>Station Location</th>
+                    <th>Device</th>
+                    <th>Screening Result</th>
+                    <th>Officer / Operator</th>
+                    <th>Lineage</th>
+                  </tr>
+                </thead>
+                <tbody id="screenings-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 4: ALERTS ================= -->
+      <div class="cc-pane" id="pane-alerts">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">ACTIVE OPERATIONAL ALERTS</div>
+            <div class="panel-meta">ATTENTION REQUIRED</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Alert ID</th>
+                    <th>Timestamp</th>
+                    <th>Location</th>
+                    <th>Screening Unit</th>
+                    <th>Severity Status</th>
+                    <th>Assigned Personnel</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="alerts-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 5: CASES ================= -->
+      <div class="cc-pane" id="pane-cases">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">SECURITY CASES &amp; VERIFICATION WORKFLOW</div>
+            <div class="panel-meta">AUDIT COMPLIANCE RECORD</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Case Reference</th>
+                    <th>Originating Event</th>
+                    <th>Station Area</th>
+                    <th>Created At</th>
+                    <th>Assigned Officer</th>
+                    <th>Lifecycle Status</th>
+                    <th>Triage</th>
+                  </tr>
+                </thead>
+                <tbody id="cases-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 6: STATION VIEW ================= -->
+      <div class="cc-pane" id="pane-station">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">STATION OPERATIONAL SCHEMATIC</div>
+          </div>
+          <div class="panel-body" style="padding: 0;">
+            <div class="station-svg-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 7: DEVICES ================= -->
+      <div class="cc-pane" id="pane-devices">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">FIELD HARDWARE REGISTRY (TRINETRA FLEET)</div>
+            <div class="panel-meta">DUAL-PLATFORM HARDWARE HEALTH</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Unit ID</th>
+                    <th>Platform Type</th>
+                    <th>Assigned Location</th>
+                    <th>Status</th>
+                    <th>Battery</th>
+                    <th>Core Temp</th>
+                    <th>Assigned Duty</th>
+                    <th>Diagnostics</th>
+                  </tr>
+                </thead>
+                <tbody id="devices-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 8: PERSONNEL ================= -->
+      <div class="cc-pane" id="pane-officers">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">RAILWAY PROTECTION FORCE (DUTY PERSONNEL)</div>
+            <div class="panel-meta">ON-DUTY ROSTER</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Officer ID</th>
+                    <th>Name</th>
+                    <th>Rank</th>
+                    <th>Department</th>
+                    <th>Assigned Duty Station</th>
+                    <th>Status</th>
+                    <th>Open Cases</th>
+                    <th>Dispatch</th>
+                  </tr>
+                </thead>
+                <tbody id="personnel-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 9: DIAGNOSTICS & SENSORS ================= -->
+      <div class="cc-pane" id="pane-diagnostics">
+        <div class="tech-spec-grid">
+          <div class="tech-spec-card">
+            <div class="tech-spec-head">
+              <img src="assets/raspberry_pi_5.jpg" alt="RPi 5" class="tech-spec-img">
+              <div>
+                <div style="font-weight:700; font-size:12px;">Raspberry Pi 5 (Edge Compute)</div>
+                <div style="font-size:10px; color:var(--text-muted);">Quad-Core Cortex-A76 @ 2.4 GHz · 8GB LPDDR4X</div>
+              </div>
+            </div>
+            <div class="st-info-list">
+              <div class="st-info-row"><span class="k">CPU Load</span><span class="v">18.4% Nominal</span></div>
+              <div class="st-info-row"><span class="k">SoC Temperature</span><span class="v">42.8°C (Active Cooling)</span></div>
+              <div class="st-info-row"><span class="k">RAM Utilization</span><span class="v">2.1 GB / 8.0 GB</span></div>
+              <div class="st-info-row"><span class="k">NVMe Storage Buffer</span><span class="v">114 GB Available</span></div>
+            </div>
+          </div>
+
+          <div class="tech-spec-card">
+            <div class="tech-spec-head">
+              <img src="assets/mmwave_radar.jpg" alt="mmWave" class="tech-spec-img">
+              <div>
+                <div style="font-weight:700; font-size:12px;">mmWave Radar (60 GHz)</div>
+                <div style="font-size:10px; color:var(--text-muted);">FMCW Transceiver · Range-Doppler Profiler</div>
+              </div>
+            </div>
+            <div class="st-info-list">
+              <div class="st-info-row"><span class="k">Sweep Bandwidth</span><span class="v">60–64 GHz (4 GHz)</span></div>
+              <div class="st-info-row"><span class="k">Range Resolution</span><span class="v">3.75 cm per bin</span></div>
+              <div class="st-info-row"><span class="k">Sampling Rate</span><span class="v">2.5 MS/s</span></div>
+              <div class="st-info-row"><span class="k">Dielectric Anomaly</span><span class="v" style="color:var(--st-check);">+18.4 dB @ 14.2 cm</span></div>
+            </div>
+          </div>
+
+          <div class="tech-spec-card">
+            <div class="tech-spec-head">
+              <img src="assets/enose_sensor.jpg" alt="E-Nose" class="tech-spec-img">
+              <div>
+                <div style="font-weight:700; font-size:12px;">E-Nose Gas Sensor Array</div>
+                <div style="font-size:10px; color:var(--text-muted);">MOX Multi-Channel Array + Pneumatic Chamber</div>
+              </div>
+            </div>
+            <div class="st-info-list">
+              <div class="st-info-row"><span class="k">Channels</span><span class="v">MQ-135, MQ-2, BME688</span></div>
+              <div class="st-info-row"><span class="k">Heater Temp</span><span class="v">300°C Regulated</span></div>
+              <div class="st-info-row"><span class="k">Pneumatic Snout</span><span class="v">0.8 L/min Flow Rate</span></div>
+              <div class="st-info-row"><span class="k">VOC Delta Peak</span><span class="v" style="color:var(--st-check);">840 PPM (MQ-135)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="panel-card">
+            <div class="panel-head">
+              <div class="panel-title">mmWave RADAR RANGE-DOPPLER RESPONSE</div>
+              <div class="panel-meta">60 GHz FMCW</div>
+            </div>
+            <div class="panel-body">
+              <div class="tech-canvas-wrap">
+                <canvas id="radar-canvas" width="460" height="180" style="width:100%; display:block;"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-head">
+              <div class="panel-title">E-NOSE MULTI-CHANNEL CHROMATOGRAPHY</div>
+              <div class="panel-meta">MOX ARRAY RESPONSE</div>
+            </div>
+            <div class="panel-body">
+              <div class="tech-canvas-wrap">
+                <canvas id="enose-canvas" width="460" height="180" style="width:100%; display:block;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 10: AI / ML ================= -->
+      <div class="cc-pane" id="pane-aiml">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">TRINETRA DUAL-MODALITY AI / ML INFERENCE ENGINE</div>
+            <div class="panel-meta">EDGE NEURAL ACCELERATOR</div>
+          </div>
+          <div class="panel-body">
+            <div class="st-info-list" style="margin-bottom:14px;">
+              <div class="st-info-row"><span class="k">Model Architecture</span><span class="v">Trinetra-Fusion-v2.4 (Cross-Attention Multimodal Transformer)</span></div>
+              <div class="st-info-row"><span class="k">Edge Quantization</span><span class="v">INT8 (TFLite / ONNX Runtime Edge)</span></div>
+              <div class="st-info-row"><span class="k">Inference Latency</span><span class="v">41.2 ms (Single Screening Sweep)</span></div>
+              <div class="st-info-row"><span class="k">Sensor Inputs</span><span class="v">60 GHz mmWave Radar FFT + MOX Gas Channel Curves + Thermal IR</span></div>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); background:var(--bg-subtle); padding:10px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
+              <b>Operational Classification Logic:</b> Neural model assigns confidence weights across radar dielectric bulk and chemical vapor response. Threshold >0.85 generates <i>Requires Verification</i> notification to RPF officer.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PANE 11: AUDIT LEDGER ================= -->
+      <div class="cc-pane" id="pane-audit">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div class="panel-title">SECURITY AUDIT &amp; COMPLIANCE LEDGER</div>
+            <div class="panel-meta">TAMPER-PROOF LOG</div>
+          </div>
+          <div class="panel-body">
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Officer / System Principal</th>
+                    <th>Operational Action</th>
+                    <th>Device</th>
+                    <th>Station Location</th>
+                  </tr>
+                </thead>
+                <tbody id="audit-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end cc-workspace -->
+
+    <!-- Footer -->
+    <footer class="cc-footer">
+      <div>TRINETRA · INTEGRATED RAILWAY SECURITY INTELLIGENCE PLATFORM</div>
+      <div>DEMO ENVIRONMENT · SIMULATED DATA · SIH 2026 (Problem Statement 26026)</div>
+    </footer>
+
+  </main><!-- end cc-app-body -->
+
+</div><!-- end cc-app -->
+
+
+<!-- ================================================================
+     MODAL 1: UNIFIED SECURITY EVENT DETAIL (TRACE LINEAGE CHAIN)
+     ================================================================ -->
+<div class="modal-backdrop" id="modal-event" role="dialog" aria-modal="true" aria-labelledby="modal-event-id">
+  <div class="modal-box modal-lg">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modal-event-id">TRN-2026-001284</div>
+        <div class="modal-subtitle" id="modal-event-location">Platform 3 — Nagpur Junction</div>
+      </div>
+      <span class="modal-close" onclick="closeModal('modal-event')" title="Close" role="button" aria-label="Close">✕</span>
+    </div>
+    <div class="modal-body" id="modal-event-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-event')">Close</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-event'); switchPane('cases');">Open Case Management →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     MODAL 2: DEVICE TELEMETRY DETAIL
+     ================================================================ -->
+<div class="modal-backdrop" id="modal-device" role="dialog" aria-modal="true" aria-labelledby="modal-device-id">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modal-device-id">TRN-HND-001</div>
+        <div class="modal-subtitle" id="modal-device-location">Platform 3 — Nagpur Junction</div>
+      </div>
+      <span class="modal-close" onclick="closeModal('modal-device')" title="Close" role="button" aria-label="Close">✕</span>
+    </div>
+    <div class="modal-body" id="modal-device-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-device')">Close</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-device'); switchPane('diagnostics');">View Sensor Telemetry →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     MODAL 3: ASSIGN DUTY OFFICER
+     ================================================================ -->
+<div class="modal-backdrop" id="modal-assign" role="dialog" aria-modal="true" aria-labelledby="modal-assign-title">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modal-assign-title">Assign Verification Officer</div>
+        <div class="modal-subtitle">Case: <b id="modal-assign-caseid">CASE-2026-001284</b></div>
+      </div>
+      <span class="modal-close" onclick="closeModal('modal-assign')" title="Close" role="button" aria-label="Close">✕</span>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">Assign this security screening case to an on-duty RPF officer. A dispatch notification will be transmitted to their TRINETRA handheld terminal.</p>
+      <div class="form-group">
+        <label class="form-label" for="assign-officer-select">Select Duty Officer</label>
+        <select class="form-input" id="assign-officer-select" style="width:100%;">
+          <option value="ASI Rahul Sharma (RPF-04217)">ASI Rahul Sharma (RPF-04217) — Platform 3 North</option>
+          <option value="Insp. Rajesh Kumar (RPF-08819)">Insp. Rajesh Kumar (RPF-08819) — Platform 2</option>
+          <option value="Const. P. Verma (RPF-03314)">Const. P. Verma (RPF-03314) — Concourse Gate A</option>
+          <option value="RPF QRT-2 (RPF-0102)">RPF QRT-2 (RPF-0102) — Quick Response Team</option>
+        </select>
       </div>
     </div>
-  </section>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('modal-assign')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAssignment()">Confirm Assignment</button>
+    </div>
+  </div>
+</div>
 
-  <!-- =====================================================================
-       FOOTER
-       ===================================================================== -->
-  <footer class="footer">
-    <div class="container footer-inner">
+<!-- ================================================================
+     AUTHENTICATION OVERLAY — RPF SECURE ACCESS TERMINAL
+     ================================================================ -->
+<div class="auth-overlay open" id="auth-overlay">
+
+  <div class="auth-header">
+    <div class="auth-ministry-badge">MINISTRY OF RAILWAYS · RAILWAY PROTECTION FORCE</div>
+    <div class="auth-brand-row">
+      <div class="auth-crest">TRN</div>
       <div>
-        <div style="font-weight: 800; color: var(--navy); font-size: 14px;">TRINETRA — SIH PROBLEM STATEMENT ID: 26026</div>
-        <div>Development of Mobile (Quadruped)/Handheld Device/System for Real-Time Detection of Narcotics and Explosives</div>
-      </div>
-      <div>
-        <span>Ministry of Railways · RPF Hardware Prototype · 2026</span>
+        <div class="auth-title">TRINETRA</div>
+        <div class="auth-sub">RAILWAY SECURITY OPERATIONS COMMAND CENTER</div>
       </div>
     </div>
-  </footer>
+  </div>
 
-  <!-- Mobile Drawer Toggle Script -->
-  <script>
-    const mobileDrawer = document.getElementById('mobile-drawer');
-    const mobileBackdrop = document.getElementById('mobile-backdrop');
-    const mobileToggle = document.getElementById('mobile-menu-toggle');
-    const mobileClose = document.getElementById('mobile-drawer-close');
+  <div class="auth-deck">
 
-    function openMobileMenu() {
-      if (mobileDrawer && mobileBackdrop) {
-        mobileDrawer.classList.add('active');
-        mobileBackdrop.classList.add('active');
-        document.body.style.overflow = 'hidden';
-      }
-    }
+    <!-- LEFT COLUMN: Department Selection & 1-Click Access -->
+    <div class="auth-card">
+      <div class="auth-card-head">
+        <div class="auth-card-title">1. SELECT OPERATIONAL DEPARTMENT</div>
+        <div class="auth-card-sub">Choose your operational branch to load role-specific workspace</div>
+      </div>
+      <div class="auth-card-body">
+        <div class="dept-grid">
+          <button type="button" class="dept-btn selected" id="dept-btn-field_ops" onclick="selectDept('field_ops')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">👮</span>
+              <span class="dept-btn-lvl">LEVEL 2</span>
+            </div>
+            <span class="dept-btn-name">Field Operations</span>
+            <span class="dept-btn-officer">ASI Rahul Sharma</span>
+            <span class="dept-btn-desc">Frontline screening, assignments &amp; SOP verification</span>
+          </button>
 
-    function closeMobileMenu() {
-      if (mobileDrawer && mobileBackdrop) {
-        mobileDrawer.classList.remove('active');
-        mobileBackdrop.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    }
+          <button type="button" class="dept-btn" id="dept-btn-technical" onclick="selectDept('technical')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">⚙️</span>
+              <span class="dept-btn-lvl">LEVEL 3</span>
+            </div>
+            <span class="dept-btn-name">Technical &amp; Engineering</span>
+            <span class="dept-btn-officer">Dr. S. K. Mehta</span>
+            <span class="dept-btn-desc">Sensor telemetry, mmWave radar &amp; AI edge models</span>
+          </button>
 
-    if (mobileToggle) mobileToggle.addEventListener('click', openMobileMenu);
-    if (mobileClose) mobileClose.addEventListener('click', closeMobileMenu);
-    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMobileMenu);
+          <button type="button" class="dept-btn" id="dept-btn-operations" onclick="selectDept('operations')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">👔</span>
+              <span class="dept-btn-lvl">LEVEL 4</span>
+            </div>
+            <span class="dept-btn-name">Operations &amp; Control</span>
+            <span class="dept-btn-officer">A. K. Joshi (DSC)</span>
+            <span class="dept-btn-desc">Station triage, officer dispatch &amp; CCTV surveillance</span>
+          </button>
 
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeMobileMenu();
-    });
-  </script>
+          <button type="button" class="dept-btn" id="dept-btn-administration" onclick="selectDept('administration')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">🏛️</span>
+              <span class="dept-btn-lvl">LEVEL 5</span>
+            </div>
+            <span class="dept-btn-name">Railway Administration</span>
+            <span class="dept-btn-officer">V. R. Nair (PCSC)</span>
+            <span class="dept-btn-desc">Zonal network KPIs &amp; compliance reporting</span>
+          </button>
+
+          <button type="button" class="dept-btn" id="dept-btn-executive" onclick="selectDept('executive')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">🇮🇳</span>
+              <span class="dept-btn-lvl">LEVEL 5</span>
+            </div>
+            <span class="dept-btn-name">Executive Command</span>
+            <span class="dept-btn-officer">K. P. Sharma (DG RPF)</span>
+            <span class="dept-btn-desc">National security readiness &amp; executive overview</span>
+          </button>
+
+          <button type="button" class="dept-btn" id="dept-btn-sys_admin" onclick="selectDept('sys_admin')">
+            <div class="dept-btn-top">
+              <span class="dept-btn-icon">🔧</span>
+              <span class="dept-btn-lvl">LEVEL 5</span>
+            </div>
+            <span class="dept-btn-name">System Administration</span>
+            <span class="dept-btn-officer">IT SysAdmin</span>
+            <span class="dept-btn-desc">RBAC accounts &amp; cryptographic audit log</span>
+          </button>
+        </div>
+
+        <div class="demo-quick-bar">
+          <div class="demo-quick-title">⚡ 1-CLICK INSTANT DEMO LOGIN</div>
+          <div class="demo-pills">
+            <button type="button" class="demo-pill" onclick="quickLogin('field_ops')">👮 Field Officer</button>
+            <button type="button" class="demo-pill" onclick="quickLogin('technical')">⚙️ Technical</button>
+            <button type="button" class="demo-pill" onclick="quickLogin('operations')">👔 Operations</button>
+            <button type="button" class="demo-pill" onclick="quickLogin('administration')">🏛️ Zonal Admin</button>
+            <button type="button" class="demo-pill" onclick="quickLogin('executive')">🇮🇳 Executive DG</button>
+            <button type="button" class="demo-pill" onclick="quickLogin('sys_admin')">🔧 Sys Admin</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Authentication & Officer Terminal -->
+    <div class="auth-card">
+      <div class="auth-card-head">
+        <div class="auth-card-title">2. OFFICER AUTHENTICATION</div>
+        <div class="auth-card-sub">Authenticated session with audit ledger entry</div>
+      </div>
+      <div class="auth-card-body">
+
+        <!-- Officer Preview -->
+        <div class="auth-officer-preview">
+          <div class="aop-avatar" id="aop-avatar">👮</div>
+          <div class="aop-info">
+            <div class="aop-name" id="aop-name">Rahul Sharma</div>
+            <div class="aop-role" id="aop-role">Assistant Sub-Inspector · Field Operations</div>
+            <div class="aop-meta">
+              <span class="aop-chip" id="aop-id">ID: RPF-04217</span>
+              <span class="aop-chip" id="aop-station">Nagpur Junction</span>
+              <span class="aop-chip" id="aop-level" style="font-weight:700; color:var(--st-clear-text);">LEVEL 2</span>
+            </div>
+          </div>
+        </div>
+
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label" for="login-id">Officer / Employee ID</label>
+            <input type="text" class="form-input" id="login-id" value="RPF-04217" autocomplete="username" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-pw">Password / Biometric PIN</label>
+            <input type="password" class="form-input" id="login-pw" value="••••••••••••" autocomplete="current-password" required>
+          </div>
+
+          <button type="submit" class="btn-signin" id="btn-signin">
+            <span id="btn-signin-text">AUTHENTICATE &amp; ENTER →</span>
+          </button>
+        </form>
+
+        <div class="auth-disclaimer">
+          <b>RPF Terminal Notice:</b> All triage decisions, station queries, and sensor telemetry access are cryptographically recorded in the Central Security Audit Ledger.
+        </div>
+
+        <div style="margin-top: 10px; text-align: center;">
+          <a href="overview.html" target="_blank" style="font-size: 11px; font-weight: 600; color: var(--accent-bronze);">
+            🌐 Visit Public Technical Proposal Website ↗
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end auth-deck -->
+
+</div><!-- end auth-overlay -->
+
+<script src="js/command_center.js"></script>
 </body>
 </html>
