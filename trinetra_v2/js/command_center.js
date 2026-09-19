@@ -275,7 +275,8 @@ let AUDIT_LOG = [
 document.addEventListener('DOMContentLoaded', () => {
   initClock();
   initStationSchematic();
-  openAuthOverlay();
+  // Automatically start with default live operations session so users immediately see the Command Center
+  setSession(DEMO_ACCOUNTS.field_ops);
 
   // Topbar station select listener
   const stationSel = document.getElementById('station-select');
